@@ -1,0 +1,67 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" apply false
+}
+
+wrapper {
+    gradleVersion = project.property("app.version.gradle")
+}
+
+subprojects {
+    apply plugin: "java"
+
+    java {
+        def javaVersion = property("app.version.java")
+
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations {
+        implementation {
+            exclude module: "spring-boot-starter-tomcat"
+        }
+        testImplementation {
+            exclude module: "junit-vintage-engine"
+        }
+    }
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-reflect"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+        implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+
+        implementation "org.springframework.boot:spring-boot-starter-undertow"
+        implementation "org.springframework.boot:spring-boot-starter-web"
+
+        testImplementation "org.springframework.boot:spring-boot-starter-test"
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs = [
+            "-Xlint:unchecked",
+            "-Xlint:deprecation",
+        ]
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+        kotlinOptions {
+            freeCompilerArgs = [
+                "-Xjsr305=strict",
+                "-Xjvm-default=all",
+                "-Xcontext-receivers",
+                "-opt-in=kotlin.RequiresOptIn"
+            ]
+            jvmTarget = project.property("app.version.java")
+            javaParameters = true
+        }
+    }
+
+    tasks.withType(Test) {
+        useJUnitPlatform()
+    }
+}

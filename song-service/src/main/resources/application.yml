@@ -1,0 +1,27 @@
+server:
+  port: ${PORT:5002}
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  application:
+    name: song-service
+  aop:
+    proxy-target-class: false
+  main:
+    allow-bean-definition-overriding: true
+  web:
+    locale: en
+    resources:
+      add-mappings: false
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILES:dev}
+  jmx:
+    enabled: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  output:
+    ansi:
+      enabled: detect
