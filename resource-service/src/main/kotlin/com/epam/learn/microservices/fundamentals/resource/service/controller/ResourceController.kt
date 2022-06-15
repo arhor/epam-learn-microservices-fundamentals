@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import javax.validation.constraints.Size
 
 @Validated
@@ -20,7 +21,12 @@ class ResourceController(private val service: ResourceService) {
         val resource = service.saveResource(filename = file.name, data = file.bytes)
         val responseBody = mapOf("id" to resource.id)
 
-        return ResponseEntity.ok(responseBody)
+        val location =
+            ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{id}")
+                .build(resource.id)
+
+        return ResponseEntity.created(location).body(responseBody)
     }
 
     @GetMapping("/{id}", produces = ["audio/mpeg"])
