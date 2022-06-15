@@ -5,10 +5,7 @@ pluginManagement {
         id "io.spring.dependency-management"     version settings["app.version.springDependencyManagement"]
         id "org.jetbrains.kotlin.kapt"           version settings["app.version.kotlin"]
         id "org.jetbrains.kotlin.jvm"            version settings["app.version.kotlin"]
-        id "org.jetbrains.kotlin.plugin.noarg"   version settings["app.version.kotlin"]
-        id "org.jetbrains.kotlin.plugin.allopen" version settings["app.version.kotlin"]
         id "org.jetbrains.kotlin.plugin.spring"  version settings["app.version.kotlin"]
-        id "org.jetbrains.kotlin.plugin.jpa"     version settings["app.version.kotlin"]
     }
 }
 // @formatter:on

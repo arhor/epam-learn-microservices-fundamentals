@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  # Resource-Service containers
+  resource-service-db:
+    image: postgres:12
+    ports:
+      - "5433:5432"
+    volumes:
+      - resource-service-db-data:/var/lib/postgresql/data
+    env_file:
+      - ./resource-service/.env.local
+
+  # Song-Service containers
+  song-service-db:
+    image: postgres:12
+    ports:
+      - "5434:5432"
+    volumes:
+      - song-service-db-data:/var/lib/postgresql/data
+    env_file:
+      - song-service/.env.local
+
+volumes:
+  resource-service-db-data:
+    driver: local
+  song-service-db-data:
+    driver: local

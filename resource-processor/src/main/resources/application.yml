@@ -21,7 +21,8 @@ spring:
   mvc:
     throw-exception-if-no-handler-found: true
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+    exclude:
+      - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   output:
     ansi:
       enabled: detect

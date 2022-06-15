@@ -4,5 +4,5 @@ spring:
       port: 35732
   config:
     import:
-      - optional:file:.env[.properties]
-      - optional:file:../.env[.properties]
+      - optional:file:.env.local[.properties]
+      - optional:file:song-service/.env.local[.properties]
