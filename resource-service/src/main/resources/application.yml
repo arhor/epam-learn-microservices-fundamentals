@@ -43,3 +43,8 @@ spring:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 0.0
+configuration:
+  aws:
+    s3:
+      access-key: ''
+      secret-key: ''
