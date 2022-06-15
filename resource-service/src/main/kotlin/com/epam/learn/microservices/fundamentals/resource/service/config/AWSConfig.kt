@@ -12,12 +12,17 @@ import org.springframework.context.annotation.Configuration
 
 
 @Configuration(proxyBeanMethods = false)
-class AmazonS3Config {
+class AWSConfig {
+
+    @ConstructorBinding
+    @ConfigurationProperties("configuration.aws")
+    data class Props(
+        val region: String,
+    )
 
     @ConstructorBinding
     @ConfigurationProperties("configuration.aws.s3")
-    data class Props(
-        val region: String,
+    data class S3Props(
         val url: String,
         val bucketName: String,
         val accessKey: String,
@@ -25,15 +30,15 @@ class AmazonS3Config {
     )
 
     @Bean
-    fun amazonS3(props: Props): AmazonS3 {
+    fun amazonS3(props: Props, s3Props: S3Props): AmazonS3 {
         val credentials = AWSStaticCredentialsProvider(
             BasicAWSCredentials(
-                props.accessKey,
-                props.secretKey
+                s3Props.accessKey,
+                s3Props.secretKey
             )
         )
         val endpointConfiguration = AwsClientBuilder.EndpointConfiguration(
-            props.url,
+            s3Props.url,
             props.region
         )
         val amazonS3 = AmazonS3ClientBuilder.standard()
@@ -41,8 +46,8 @@ class AmazonS3Config {
             .withEndpointConfiguration(endpointConfiguration)
             .build()
 
-        if (!amazonS3.doesBucketExistV2(props.bucketName)) {
-            amazonS3.createBucket(props.bucketName)
+        if (!amazonS3.doesBucketExistV2(s3Props.bucketName)) {
+            amazonS3.createBucket(s3Props.bucketName)
         }
         return amazonS3
     }

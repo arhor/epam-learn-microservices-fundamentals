@@ -10,8 +10,9 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/resources")
 class ResourceController(private val service: ResourceService) {
 
-    @PostMapping(consumes = ["audio/mpeg"])
+    @PostMapping(consumes = ["multipart/form-data"])
     fun uploadNewResource(@RequestParam file: MultipartFile): ResponseEntity<*> {
+
         val resource = service.saveResource(filename = file.name, data = file.bytes)
         val responseBody = mapOf("id" to resource.id)
 

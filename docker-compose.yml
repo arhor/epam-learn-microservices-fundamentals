@@ -1,17 +1,30 @@
 version: "3.8"
 
 services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - '4566-4583:4566-4583'
+    env_file:
+      - resource-service/.env.local
+    volumes:
+      - ${TEMPDIR:-/tmp/localstack}:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
   resource-service-db:
     image: postgres:12
+    container_name: resource-service-db
     ports:
       - "5433:5432"
     volumes:
       - resource-service-db-data:/var/lib/postgresql/data
     env_file:
-      - ./resource-service/.env.local
+      - resource-service/.env.local
 
   song-service-db:
     image: postgres:12
+    container_name: song-service-db
     ports:
       - "5434:5432"
     volumes:
