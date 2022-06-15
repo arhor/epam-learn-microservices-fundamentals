@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-  # Resource-Service containers
   resource-service-db:
     image: postgres:12
     ports:
@@ -11,7 +10,6 @@ services:
     env_file:
       - ./resource-service/.env.local
 
-  # Song-Service containers
   song-service-db:
     image: postgres:12
     ports:
