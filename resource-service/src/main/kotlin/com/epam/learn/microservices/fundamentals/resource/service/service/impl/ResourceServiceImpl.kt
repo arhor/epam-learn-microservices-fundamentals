@@ -4,6 +4,7 @@ import com.epam.learn.microservices.fundamentals.resource.service.data.model.Res
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceMetaRepository
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
+import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityDuplicateException
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityNotFoundException
 import org.springframework.data.repository.findByIdOrNull
@@ -20,14 +21,25 @@ class ResourceServiceImpl(
         if (metaRepository.existsByFilename(filename)) {
             throw EntityDuplicateException("filename = $filename")
         }
-        return dataRepository.upload(filename, data).let(metaRepository::save)
+        return dataRepository.upload(filename, data.inputStream(), data.size.toLong()).let(metaRepository::save)
     }
 
-    override fun findResource(id: Long): Pair<ResourceMeta, InputStream> {
-        val meta = metaRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("id = $id")
-        val data = dataRepository.download(meta.filename)
+    override fun saveResource(filename: String, data: InputStream, size: Long): ResourceMeta {
+        if (metaRepository.existsByFilename(filename)) {
+            throw EntityDuplicateException("filename = $filename")
+        }
+        return dataRepository.upload(filename, data, size).let(metaRepository::save)
+    }
 
-        return meta to data
+    override fun findResource(id: Long): ResourceDTO {
+        val meta = metaRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("id = $id")
+        val (data, size) = dataRepository.download(meta.filename)
+
+        return ResourceDTO(
+            filename = meta.filename,
+            data = data,
+            size = size,
+        )
     }
 
     override fun deleteResources(ids: Iterable<Long>): Iterable<Long> {

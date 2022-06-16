@@ -4,6 +4,7 @@ import com.epam.learn.microservices.fundamentals.resource.service.service.Resour
 import com.epam.learn.microservices.fundamentals.resource.service.validation.HasMediaType
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -18,24 +19,30 @@ class ResourceController(private val service: ResourceService) {
 
     @PostMapping(consumes = ["multipart/form-data"])
     fun uploadNewResource(@RequestParam @HasMediaType("audio/mpeg") file: MultipartFile): ResponseEntity<*> {
-        val resource = service.saveResource(filename = file.name, data = file.bytes)
-        val responseBody = mapOf("id" to resource.id)
+        val resource = service.saveResource(
+            filename = file.originalFilename ?: file.name,
+            data = file.inputStream,
+            size = file.size,
+        )
 
         val location =
             ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{id}")
                 .build(resource.id)
 
+        val responseBody = mapOf("id" to resource.id)
+
         return ResponseEntity.created(location).body(responseBody)
     }
 
-    @GetMapping("/{id}", produces = ["audio/mpeg"])
+    @GetMapping("/{id}")
     fun getResourceAudioBinaryData(@PathVariable id: Long): ResponseEntity<*> {
-        val (resource, data) = service.findResource(id)
-        val stream = InputStreamResource(data)
+        val resource = service.findResource(id)
+        val stream = InputStreamResource(resource.data)
 
         return ResponseEntity.ok()
-            .contentLength(resource.length)
+            .contentLength(resource.size)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header(CONTENT_DISPOSITION, "attachment; filename=\"${resource.filename}\"")
             .body(stream)
     }

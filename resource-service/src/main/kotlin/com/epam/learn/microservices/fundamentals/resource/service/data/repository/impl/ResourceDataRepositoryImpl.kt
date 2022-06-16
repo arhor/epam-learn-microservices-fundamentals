@@ -2,12 +2,12 @@ package com.epam.learn.microservices.fundamentals.resource.service.data.reposito
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.DeleteObjectsRequest
+import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.epam.learn.microservices.fundamentals.resource.service.config.S3Props
 import com.epam.learn.microservices.fundamentals.resource.service.data.model.ResourceMeta
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import org.springframework.stereotype.Repository
-import java.io.ByteArrayInputStream
 import java.io.InputStream
 
 @Repository
@@ -16,33 +16,29 @@ class ResourceDataRepositoryImpl(
     private val s3Props: S3Props,
 ) : ResourceDataRepository {
 
-    override fun upload(filename: String, data: ByteArray): ResourceMeta {
-        val dataStream = ByteArrayInputStream(data)
-        val metadata = ObjectMetadata().apply { contentLength = data.size.toLong() }
+    override fun upload(filename: String, data: InputStream, size: Long): ResourceMeta {
+        s3Client.putObject(s3Props.bucket, filename, data, ObjectMetadata().apply {
+            contentLength = size
+        })
 
-        val bucket = s3Props.bucket
-        val result = s3Client.putObject(bucket, filename, dataStream, metadata)
-
-        return ResourceMeta(
-            filename = filename,
-            uploaded = result != null,
-            length = result?.metadata?.contentLength ?: 0
-        )
+        return ResourceMeta(filename = filename)
     }
 
-    override fun download(filename: String): InputStream {
-        val bucketName = s3Props.bucket
-        val s3Object = s3Client.getObject(bucketName, filename)
+    override fun download(filename: String): Pair<InputStream, Long> {
+        val result = s3Client.getObject(s3Props.bucket, filename)
 
-        return s3Object.objectContent
+        val data = result.objectContent
+        val size = result.objectMetadata.contentLength
+
+        return data to size
     }
 
     override fun delete(filenames: Iterable<String>): List<String> {
-        val bucketName = s3Props.bucket
-        val filesToDelete = filenames.toList().toTypedArray()
-        val request = DeleteObjectsRequest(bucketName).withKeys(*filesToDelete)
-
-        val result = s3Client.deleteObjects(request)
+        val result = s3Client.deleteObjects(
+            DeleteObjectsRequest(s3Props.bucket).apply {
+                keys = filenames.map(::KeyVersion)
+            }
+        )
 
         return result.deletedObjects.map { it.key }
     }

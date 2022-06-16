@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.validation.ConstraintViolationException
 
@@ -51,7 +53,7 @@ class GlobalExceptionHandler(private val messages: MessageSource) {
         details: List<String>? = null
     ): ErrorResponse {
         val message = messages.getMessage(code.label, args, locale)
-        val timestamp = LocalDateTime.now()
+        val timestamp = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS)
 
         return ErrorResponse(code, message, details, timestamp)
     }
