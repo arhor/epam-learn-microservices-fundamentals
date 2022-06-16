@@ -17,18 +17,20 @@ class ResourceServiceImpl(
     private val dataRepository: ResourceDataRepository,
 ) : ResourceService {
 
-    override fun saveResource(filename: String, data: ByteArray): ResourceMeta {
-        if (metaRepository.existsByFilename(filename)) {
-            throw EntityDuplicateException("filename = $filename")
-        }
-        return dataRepository.upload(filename, data.inputStream(), data.size.toLong()).let(metaRepository::save)
+    override fun saveResource(filename: String, data: ByteArray): Long {
+        return saveResourceInternal(
+            filename,
+            data.inputStream(),
+            data.size.toLong(),
+        )
     }
 
-    override fun saveResource(filename: String, data: InputStream, size: Long): ResourceMeta {
-        if (metaRepository.existsByFilename(filename)) {
-            throw EntityDuplicateException("filename = $filename")
-        }
-        return dataRepository.upload(filename, data, size).let(metaRepository::save)
+    override fun saveResource(resource: ResourceDTO): Long {
+        return saveResourceInternal(
+            resource.filename,
+            resource.data,
+            resource.size,
+        )
     }
 
     override fun findResource(id: Long): ResourceDTO {
@@ -57,5 +59,16 @@ class ResourceServiceImpl(
         metaRepository.deleteAllById(deletedResourceIds)
 
         return deletedResourceIds
+    }
+
+    private fun saveResourceInternal(filename: String, data: InputStream, size: Long): Long {
+        if (metaRepository.existsByFilename(filename)) {
+            throw EntityDuplicateException("filename = $filename")
+        }
+
+        val metadata = dataRepository.upload(filename, data, size)
+        val (id) = metaRepository.save(metadata)
+
+        return id ?: throw IllegalStateException("Saved resource must have an ID")
     }
 }

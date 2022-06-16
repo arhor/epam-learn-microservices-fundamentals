@@ -6,9 +6,9 @@ import java.io.InputStream
 
 interface ResourceService {
 
-    fun saveResource(filename: String, data: ByteArray): ResourceMeta
+    fun saveResource(filename: String, data: ByteArray): Long
 
-    fun saveResource(filename: String, data: InputStream, size: Long): ResourceMeta
+    fun saveResource(resource: ResourceDTO): Long
 
     fun findResource(id: Long): ResourceDTO
 
