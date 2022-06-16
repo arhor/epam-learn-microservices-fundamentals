@@ -9,6 +9,7 @@ import com.epam.learn.microservices.fundamentals.resource.service.service.except
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.io.InputStream
 
 @Service
@@ -44,21 +45,27 @@ class ResourceServiceImpl(
         )
     }
 
+    @Transactional
     override fun deleteResources(ids: Iterable<Long>): Iterable<Long> {
         val resourceIdsByFilename =
             metaRepository.findAllById(ids).groupBy(
                 ResourceMeta::filename,
                 ResourceMeta::id,
             )
-        val deletedResourceIds =
-            dataRepository.delete(resourceIdsByFilename.keys)
-                .mapNotNull(resourceIdsByFilename::get)
-                .flatten()
-                .filterNotNull()
+        return if (resourceIdsByFilename.isNotEmpty()) {
+            val deletedResourceIds =
+                dataRepository.delete(resourceIdsByFilename.keys)
+                    .mapNotNull(resourceIdsByFilename::get)
+                    .flatten()
+                    .filterNotNull()
 
-        metaRepository.deleteAllById(deletedResourceIds)
-
-        return deletedResourceIds
+            if (deletedResourceIds.isNotEmpty()) {
+                metaRepository.deleteAllById(deletedResourceIds)
+            }
+            deletedResourceIds
+        } else {
+            emptyList()
+        }
     }
 
     private fun saveResourceInternal(filename: String, data: InputStream, size: Long): Long {

@@ -1,6 +1,9 @@
 package com.epam.learn.microservices.fundamentals.resource.service.controller
 
+import com.epam.learn.microservices.fundamentals.resource.service.controller.response.IdListResponse
+import com.epam.learn.microservices.fundamentals.resource.service.controller.response.IdResponse
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
+import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
 import com.epam.learn.microservices.fundamentals.resource.service.validation.HasMediaType
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
@@ -19,20 +22,22 @@ class ResourceController(private val service: ResourceService) {
 
     @PostMapping(consumes = ["multipart/form-data"])
     fun uploadNewResource(@RequestParam @HasMediaType("audio/mpeg") file: MultipartFile): ResponseEntity<*> {
-        val resource = service.saveResource(
-            filename = file.originalFilename ?: file.name,
-            data = file.inputStream,
-            size = file.size,
+        val id = service.saveResource(
+            ResourceDTO(
+                filename = file.originalFilename ?: file.name,
+                data = file.inputStream,
+                size = file.size,
+            )
         )
 
         val location =
             ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{id}")
-                .build(resource.id)
+                .build(id)
 
-        val responseBody = mapOf("id" to resource.id)
+        val response = IdResponse(id)
 
-        return ResponseEntity.created(location).body(responseBody)
+        return ResponseEntity.created(location).body(response)
     }
 
     @GetMapping("/{id}")
@@ -48,10 +53,10 @@ class ResourceController(private val service: ResourceService) {
     }
 
     @DeleteMapping
-    fun deleteResources(@RequestParam @Size(max = 200) ids: Iterable<Long>): ResponseEntity<*> {
+    fun deleteResources(@RequestParam @Size(max = 200) ids: List<Long>): ResponseEntity<*> {
         val deleteResourcesIds = service.deleteResources(ids)
-        val responseBody = mapOf("ids" to deleteResourcesIds)
+        val response = IdListResponse(deleteResourcesIds)
 
-        return ResponseEntity.ok(responseBody)
+        return ResponseEntity.ok(response)
     }
 }
