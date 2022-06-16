@@ -20,9 +20,7 @@ class ResourceServiceImpl(
         if (metaRepository.existsByFilename(filename)) {
             throw EntityDuplicateException("filename = $filename")
         }
-        val resource = dataRepository.upload(filename, data)
-
-        return metaRepository.save(resource)
+        return dataRepository.upload(filename, data).let(metaRepository::save)
     }
 
     override fun findResource(id: Long): Pair<ResourceMeta, InputStream> {
@@ -33,9 +31,19 @@ class ResourceServiceImpl(
     }
 
     override fun deleteResources(ids: Iterable<Long>): Iterable<Long> {
-        val resources = metaRepository.findAllById(ids)
-        val deletedResources = dataRepository.delete(resources.mapNotNull { it.filename })
+        val resourceIdsByFilename =
+            metaRepository.findAllById(ids).groupBy(
+                ResourceMeta::filename,
+                ResourceMeta::id,
+            )
+        val deletedResourceIds =
+            dataRepository.delete(resourceIdsByFilename.keys)
+                .mapNotNull(resourceIdsByFilename::get)
+                .flatten()
+                .filterNotNull()
 
-        return deletedResources.mapNotNull { filename -> resources.find { it.filename == filename }?.id }
+        metaRepository.deleteAllById(deletedResourceIds)
+
+        return deletedResourceIds
     }
 }

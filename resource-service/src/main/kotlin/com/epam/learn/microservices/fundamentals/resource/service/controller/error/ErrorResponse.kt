@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import java.io.Serializable
 import java.time.LocalDateTime
 
-@JsonPropertyOrder("code", "message", "timestamp")
+@JsonPropertyOrder("code", "message", "details", "timestamp")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ErrorResponse(
-    val code: ErrorCode? = ErrorCode.UNCATEGORIZED,
-    val message: String?,
-    val timestamp: LocalDateTime?
+    val code: ErrorCode = ErrorCode.UNCATEGORIZED,
+    val message: String,
+    val details: List<String>?,
+    val timestamp: LocalDateTime,
 ) : Serializable

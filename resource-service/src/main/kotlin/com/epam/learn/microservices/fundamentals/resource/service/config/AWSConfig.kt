@@ -10,45 +10,51 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+@ConstructorBinding
+@ConfigurationProperties("configuration.aws")
+data class AWSProps(
+    val region: String,
+)
+
+@ConstructorBinding
+@ConfigurationProperties("configuration.aws.s3")
+data class S3Props(
+    val url: String,
+    val bucket: String,
+    val accessKey: String,
+    val secretKey: String,
+)
 
 @Configuration(proxyBeanMethods = false)
 class AWSConfig {
 
-    @ConstructorBinding
-    @ConfigurationProperties("configuration.aws")
-    data class Props(
-        val region: String,
-    )
-
-    @ConstructorBinding
-    @ConfigurationProperties("configuration.aws.s3")
-    data class S3Props(
-        val url: String,
-        val bucketName: String,
-        val accessKey: String,
-        val secretKey: String,
-    )
-
     @Bean
-    fun amazonS3(props: Props, s3Props: S3Props): AmazonS3 {
+    fun amazonS3(awsProps: AWSProps, s3Props: S3Props): AmazonS3 {
         val credentials = AWSStaticCredentialsProvider(
             BasicAWSCredentials(
                 s3Props.accessKey,
-                s3Props.secretKey
+                s3Props.secretKey,
             )
         )
         val endpointConfiguration = AwsClientBuilder.EndpointConfiguration(
             s3Props.url,
-            props.region
+            awsProps.region
         )
         val amazonS3 = AmazonS3ClientBuilder.standard()
             .withCredentials(credentials)
             .withEndpointConfiguration(endpointConfiguration)
             .build()
 
-        if (!amazonS3.doesBucketExistV2(s3Props.bucketName)) {
-            amazonS3.createBucket(s3Props.bucketName)
-        }
+        amazonS3.createBucketIfNotExists(s3Props.bucket)
+
         return amazonS3
+    }
+
+    private fun AmazonS3.createBucketIfNotExists(bucket: String) {
+        val shouldCreateBucket = !doesBucketExistV2(bucket)
+
+        if (shouldCreateBucket) {
+            createBucket(bucket)
+        }
     }
 }

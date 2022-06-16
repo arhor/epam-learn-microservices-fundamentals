@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import java.time.LocalDateTime
 import java.util.*
+import javax.validation.ConstraintViolationException
 
 @RestControllerAdvice
 class GlobalExceptionHandler(private val messages: MessageSource) {
@@ -24,22 +25,35 @@ class GlobalExceptionHandler(private val messages: MessageSource) {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EntityDuplicateException::class)
     fun handleEntityDuplicateException(exception: EntityDuplicateException, locale: Locale): ErrorResponse {
-        log.error("Entity with specified condition already exists", exception)
-        return createErrorResponse(ErrorCode.ENTITY_DUPLICATE, locale, exception.condition)
+        log.error("Resource with specified condition already exists", exception)
+        return createErrorResponse(ErrorCode.RESOURCE_DUPLICATE, locale, exception.condition)
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFoundException(exception: EntityNotFoundException, locale: Locale): ErrorResponse {
-        log.error("Entity with specified condition is not found", exception)
-        return createErrorResponse(ErrorCode.ENTITY_NOT_FOUND, locale, exception.condition)
+        log.error("Resource with specified condition is not found", exception)
+        return createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND, locale, exception.condition)
     }
 
-    private fun createErrorResponse(errorCode: ErrorCode, locale: Locale, vararg args: Any): ErrorResponse {
-        val message = messages.getMessage(errorCode.label, args, locale)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolationException(exception: ConstraintViolationException, locale: Locale): ErrorResponse {
+        log.error("Validation failed", exception)
+        val constraintViolationMessages = exception.constraintViolations.map { it.message }
+        return createErrorResponse(ErrorCode.VALIDATION_FAILED, locale, details = constraintViolationMessages)
+    }
+
+    private fun createErrorResponse(
+        code: ErrorCode,
+        locale: Locale,
+        vararg args: Any,
+        details: List<String>? = null
+    ): ErrorResponse {
+        val message = messages.getMessage(code.label, args, locale)
         val timestamp = LocalDateTime.now()
 
-        return ErrorResponse(errorCode, message, timestamp)
+        return ErrorResponse(code, message, details, timestamp)
     }
 
     companion object {

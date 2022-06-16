@@ -1,27 +1,25 @@
 package com.epam.learn.microservices.fundamentals.resource.service.validation
 
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext
 import org.springframework.web.multipart.MultipartFile
 import javax.validation.Constraint
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
+import javax.validation.Payload
+import kotlin.reflect.KClass
 
 @MustBeDocumented
 @Constraint(validatedBy = [HasMediaType.Validator::class])
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class HasMediaType(
-    /**
-     * Required MediaType for the MultipartFile instance under validation.
-     */
     val value: String,
-
-    /**
-     * The error message displayed in case of validation failure.
-     */
-    val message: String = "{error.validation.wrong.media-type}"
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = [],
+    val message: String = "{com.epam.learn.microservices.fundamentals.resource.service.validation.HasMediaType.message}"
 ) {
 
-    class Validator : ConstraintValidator<HasMediaType, MultipartFile> {
+    open class Validator : ConstraintValidator<HasMediaType, MultipartFile> {
 
         private lateinit var requiredMediaType: String
 
@@ -30,8 +28,14 @@ annotation class HasMediaType(
         }
 
         override fun isValid(value: MultipartFile?, context: ConstraintValidatorContext): Boolean {
-            return value == null
-                || value.contentType == requiredMediaType
+            if ((value == null) || (requiredMediaType == value.contentType)) {
+                return true
+            }
+            context.unwrap(HibernateConstraintValidatorContext::class.java)
+                .addMessageParameter("0", requiredMediaType)
+                .addMessageParameter("1", value.contentType)
+
+            return false
         }
     }
 }
