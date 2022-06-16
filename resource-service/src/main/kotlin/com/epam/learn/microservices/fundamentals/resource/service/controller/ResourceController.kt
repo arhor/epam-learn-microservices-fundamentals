@@ -40,14 +40,12 @@ class ResourceController(private val service: ResourceService) {
         return ResponseEntity.created(location).body(response)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}", produces = ["application/octet-stream"])
     fun getResourceAudioBinaryData(@PathVariable id: Long): ResponseEntity<*> {
         val resource = service.findResource(id)
         val stream = InputStreamResource(resource.data)
 
         return ResponseEntity.ok()
-            .contentLength(resource.size)
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header(CONTENT_DISPOSITION, "attachment; filename=\"${resource.filename}\"")
             .body(stream)
     }

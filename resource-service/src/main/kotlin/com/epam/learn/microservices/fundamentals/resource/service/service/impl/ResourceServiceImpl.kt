@@ -18,6 +18,7 @@ class ResourceServiceImpl(
     private val dataRepository: ResourceDataRepository,
 ) : ResourceService {
 
+    @Transactional
     override fun saveResource(filename: String, data: ByteArray): Long {
         return saveResourceInternal(
             filename,
@@ -26,6 +27,7 @@ class ResourceServiceImpl(
         )
     }
 
+    @Transactional
     override fun saveResource(resource: ResourceDTO): Long {
         return saveResourceInternal(
             resource.filename,
