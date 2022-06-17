@@ -1,8 +1,8 @@
 package com.epam.learn.microservices.fundamentals.resource.service.service.impl
 
-import com.epam.learn.microservices.fundamentals.resource.service.data.model.ResourceMeta
+import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
-import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceMetaRepository
+import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceRepository
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityDuplicateException
@@ -11,10 +11,12 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.InputStream
+import java.time.Clock
+import java.time.LocalDateTime
 
 @Service
 class ResourceServiceImpl(
-    private val metaRepository: ResourceMetaRepository,
+    private val repository: ResourceRepository,
     private val dataRepository: ResourceDataRepository,
 ) : ResourceService {
 
@@ -36,33 +38,63 @@ class ResourceServiceImpl(
         )
     }
 
-    override fun findResource(id: Long): ResourceDTO {
-        val meta = metaRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("id = $id")
-        val (data, size) = dataRepository.download(meta.filename)
+    override fun getResource(id: Long): ResourceDTO {
+        val meta = repository.findByIdOrNull(id)
+            ?: throw EntityNotFoundException("id = $id")
+
+        val filename = meta.filename
+            ?: throw IllegalStateException("filename cannot be null")
+
+        val (data, size) = dataRepository.download(filename)
 
         return ResourceDTO(
-            filename = meta.filename,
+            filename = filename,
             data = data,
             size = size,
         )
     }
 
     @Transactional
+    override fun getUnprocessedResource(): ResourceDTO {
+        val filename = repository.findUnprocessedResourceFilename()
+            ?: throw EntityNotFoundException("status = ${Resource.ProcessingStatus.NONE}")
+
+        repository.updateResourceStatus(Resource.ProcessingStatus.PENDING, filename)
+
+        val (data, size) = dataRepository.download(filename)
+
+        return ResourceDTO(
+            filename = filename,
+            data = data,
+            size = size,
+        )
+    }
+
+    override fun resetOutdatedPendingResourcesStatus() {
+        val deadline = LocalDateTime.now(Clock.systemUTC()).minusHours(1)
+        val outdatedResources = repository.findOutdatedPendingResourcesFilenames(deadline)
+
+        if (outdatedResources.isNotEmpty()) {
+            repository.updateResourcesStatus(Resource.ProcessingStatus.NONE, outdatedResources)
+        }
+    }
+
+    @Transactional
     override fun deleteResources(ids: Iterable<Long>): Iterable<Long> {
         val resourceIdsByFilename =
-            metaRepository.findAllById(ids).groupBy(
-                ResourceMeta::filename,
-                ResourceMeta::id,
+            repository.findAllById(ids).groupBy(
+                Resource::filename,
+                Resource::id,
             )
         return if (resourceIdsByFilename.isNotEmpty()) {
             val deletedResourceIds =
-                dataRepository.delete(resourceIdsByFilename.keys)
+                dataRepository.delete(resourceIdsByFilename.keys.filterNotNull())
                     .mapNotNull(resourceIdsByFilename::get)
                     .flatten()
                     .filterNotNull()
 
             if (deletedResourceIds.isNotEmpty()) {
-                metaRepository.deleteAllById(deletedResourceIds)
+                repository.deleteAllById(deletedResourceIds)
             }
             deletedResourceIds
         } else {
@@ -71,13 +103,18 @@ class ResourceServiceImpl(
     }
 
     private fun saveResourceInternal(filename: String, data: InputStream, size: Long): Long {
-        if (metaRepository.existsByFilename(filename)) {
+        if (repository.existsByFilename(filename)) {
             throw EntityDuplicateException("filename = $filename")
         }
 
         dataRepository.upload(filename, data, size)
-        val (id) = metaRepository.save(ResourceMeta(filename = filename))
 
-        return id ?: throw IllegalStateException("Saved resource must have an ID")
+        val resource = repository.save(
+            Resource().also {
+                it.filename = filename
+                it.status = Resource.ProcessingStatus.NONE
+            }
+        )
+        return resource.id ?: throw IllegalStateException("Saved resource must have an ID")
     }
 }

@@ -1,8 +1,6 @@
 package com.epam.learn.microservices.fundamentals.resource.service.service
 
-import com.epam.learn.microservices.fundamentals.resource.service.data.model.ResourceMeta
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
-import java.io.InputStream
 
 interface ResourceService {
 
@@ -10,7 +8,11 @@ interface ResourceService {
 
     fun saveResource(resource: ResourceDTO): Long
 
-    fun findResource(id: Long): ResourceDTO
+    fun getResource(id: Long): ResourceDTO
+
+    fun getUnprocessedResource(): ResourceDTO
+
+    fun resetOutdatedPendingResourcesStatus()
 
     fun deleteResources(ids: Iterable<Long>): Iterable<Long>
 }

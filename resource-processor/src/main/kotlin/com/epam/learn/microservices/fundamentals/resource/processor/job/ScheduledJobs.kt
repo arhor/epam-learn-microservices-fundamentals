@@ -1,4 +1,4 @@
-package com.epam.learn.microservices.fundamentals.resource.processor.jobs
+package com.epam.learn.microservices.fundamentals.resource.processor.job
 
 import com.epam.learn.microservices.fundamentals.resource.processor.client.ResourceServiceClient
 import com.epam.learn.microservices.fundamentals.resource.processor.client.SongServiceClient

@@ -7,7 +7,6 @@ import com.epam.learn.microservices.fundamentals.resource.service.service.dto.Re
 import com.epam.learn.microservices.fundamentals.resource.service.validation.HasMediaType
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -42,12 +41,16 @@ class ResourceController(private val service: ResourceService) {
 
     @GetMapping("/{id}", produces = ["application/octet-stream"])
     fun getResourceAudioBinaryData(@PathVariable id: Long): ResponseEntity<*> {
-        val resource = service.findResource(id)
-        val stream = InputStreamResource(resource.data)
+        val resource = service.getResource(id)
 
-        return ResponseEntity.ok()
-            .header(CONTENT_DISPOSITION, "attachment; filename=\"${resource.filename}\"")
-            .body(stream)
+        return dtoToResponseEntity(resource)
+    }
+
+    @GetMapping("/unprocessed", produces = ["application/octet-stream"])
+    fun getUnprocessedResourceAudioBinaryData(): ResponseEntity<*> {
+        val resource = service.getUnprocessedResource()
+
+        return dtoToResponseEntity(resource)
     }
 
     @DeleteMapping
@@ -56,5 +59,13 @@ class ResourceController(private val service: ResourceService) {
         val response = IdListResponse(deleteResourcesIds)
 
         return ResponseEntity.ok(response)
+    }
+
+    private fun dtoToResponseEntity(dto: ResourceDTO): ResponseEntity<*> {
+        val stream = InputStreamResource(dto.data)
+
+        return ResponseEntity.ok()
+            .header(CONTENT_DISPOSITION, "attachment; filename=\"${dto.filename}\"")
+            .body(stream)
     }
 }
