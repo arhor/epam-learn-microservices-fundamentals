@@ -8,7 +8,7 @@ plugins {
 
 dependencyManagement {
     imports {
-        mavenBom "org.testcontainers:testcontainers-bom:${property("app.version.testcontainers")}"
+        mavenBom "org.testcontainers:testcontainers-bom:${property('app.version.testcontainers')}"
     }
 }
 

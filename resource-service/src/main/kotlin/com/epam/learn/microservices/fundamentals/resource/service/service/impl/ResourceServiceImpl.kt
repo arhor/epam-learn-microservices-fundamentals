@@ -75,8 +75,8 @@ class ResourceServiceImpl(
             throw EntityDuplicateException("filename = $filename")
         }
 
-        val metadata = dataRepository.upload(filename, data, size)
-        val (id) = metaRepository.save(metadata)
+        dataRepository.upload(filename, data, size)
+        val (id) = metaRepository.save(ResourceMeta(filename = filename))
 
         return id ?: throw IllegalStateException("Saved resource must have an ID")
     }

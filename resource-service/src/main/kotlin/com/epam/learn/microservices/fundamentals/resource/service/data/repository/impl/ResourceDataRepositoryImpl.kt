@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.epam.learn.microservices.fundamentals.resource.service.config.S3Props
-import com.epam.learn.microservices.fundamentals.resource.service.data.model.ResourceMeta
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import org.springframework.stereotype.Repository
 import java.io.InputStream
@@ -16,12 +15,15 @@ class ResourceDataRepositoryImpl(
     private val s3Props: S3Props,
 ) : ResourceDataRepository {
 
-    override fun upload(filename: String, data: InputStream, size: Long): ResourceMeta {
-        s3Client.putObject(s3Props.bucket, filename, data, ObjectMetadata().apply {
-            contentLength = size
-        })
-
-        return ResourceMeta(filename = filename)
+    override fun upload(filename: String, data: InputStream, size: Long) {
+        s3Client.putObject(
+            s3Props.bucket,
+            filename,
+            data,
+            ObjectMetadata().apply {
+                contentLength = size
+            }
+        )
     }
 
     override fun download(filename: String): Pair<InputStream, Long> {
