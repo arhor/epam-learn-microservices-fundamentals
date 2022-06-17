@@ -39,5 +39,5 @@ interface ResourceRepository : CrudRepository<Resource, Long> {
 
     @Modifying
     @Query("UPDATE resources SET status = :status WHERE filename IN :filenames")
-    fun updateResourcesStatus(status: Resource.ProcessingStatus, filenames: List<String>)
+    fun updateResourcesStatus(status: Resource.ProcessingStatus, filenames: List<String>): Int
 }

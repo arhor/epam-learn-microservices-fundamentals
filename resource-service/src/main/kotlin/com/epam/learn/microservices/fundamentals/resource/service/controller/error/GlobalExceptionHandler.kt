@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import java.lang.invoke.MethodHandles
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -59,6 +60,6 @@ class GlobalExceptionHandler(private val messages: MessageSource) {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+        private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     }
 }

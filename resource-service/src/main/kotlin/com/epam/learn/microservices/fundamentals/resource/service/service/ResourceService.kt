@@ -12,7 +12,7 @@ interface ResourceService {
 
     fun getUnprocessedResource(): ResourceDTO
 
-    fun resetOutdatedPendingResourcesStatus()
+    fun resetOutdatedPendingResourcesStatus(): Int
 
     fun deleteResources(ids: Iterable<Long>): Iterable<Long>
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import org.slf4j.LoggerFactory
+import java.lang.invoke.MethodHandles
 
 class ErrorCodeSerializer : StdSerializer<ErrorCode>(ErrorCode::class.java) {
 
@@ -27,6 +28,6 @@ class ErrorCodeSerializer : StdSerializer<ErrorCode>(ErrorCode::class.java) {
         private const val NUM_CODE_MAX_LENGTH = 5
         private const val NUM_CODE_PAD_SYMBOL = '0'
 
-        private val log = LoggerFactory.getLogger(ErrorCodeSerializer::class.java)
+        private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     }
 }

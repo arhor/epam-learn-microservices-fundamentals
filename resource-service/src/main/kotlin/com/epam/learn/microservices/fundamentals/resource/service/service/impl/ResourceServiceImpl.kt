@@ -70,13 +70,18 @@ class ResourceServiceImpl(
         )
     }
 
-    override fun resetOutdatedPendingResourcesStatus() {
+    @Transactional
+    override fun resetOutdatedPendingResourcesStatus(): Int {
         val deadline = LocalDateTime.now(Clock.systemUTC()).minusHours(1)
         val outdatedResources = repository.findOutdatedPendingResourcesFilenames(deadline)
 
-        if (outdatedResources.isNotEmpty()) {
+        val rowsUpdated = if (outdatedResources.isNotEmpty()) {
             repository.updateResourcesStatus(Resource.ProcessingStatus.NONE, outdatedResources)
+        } else {
+            0
         }
+
+        return rowsUpdated
     }
 
     @Transactional
