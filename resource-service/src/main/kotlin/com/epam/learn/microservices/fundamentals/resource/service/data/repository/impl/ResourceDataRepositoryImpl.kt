@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.DeleteObjectsRequest
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion
 import com.amazonaws.services.s3.model.ObjectMetadata
-import com.epam.learn.microservices.fundamentals.resource.service.config.S3Props
+import com.epam.learn.microservices.fundamentals.resource.service.config.AWSConfig.S3Props
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import org.springframework.stereotype.Repository
 import java.io.InputStream

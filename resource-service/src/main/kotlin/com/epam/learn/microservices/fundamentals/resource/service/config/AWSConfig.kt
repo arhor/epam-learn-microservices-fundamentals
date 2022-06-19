@@ -10,26 +10,26 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-@ConstructorBinding
-@ConfigurationProperties("configuration.aws")
-data class AWSProps(
-    val region: String,
-)
-
-@ConstructorBinding
-@ConfigurationProperties("configuration.aws.s3")
-data class S3Props(
-    val url: String,
-    val bucket: String,
-    val accessKey: String,
-    val secretKey: String,
-)
-
 @Configuration(proxyBeanMethods = false)
 class AWSConfig {
 
+    @ConstructorBinding
+    @ConfigurationProperties("configuration.aws")
+    data class Props(
+        val region: String,
+    )
+
+    @ConstructorBinding
+    @ConfigurationProperties("configuration.aws.s3")
+    data class S3Props(
+        val url: String,
+        val bucket: String,
+        val accessKey: String,
+        val secretKey: String,
+    )
+
     @Bean
-    fun amazonS3(awsProps: AWSProps, s3Props: S3Props): AmazonS3 {
+    fun amazonS3(props: Props, s3Props: S3Props): AmazonS3 {
         val credentials = AWSStaticCredentialsProvider(
             BasicAWSCredentials(
                 s3Props.accessKey,
@@ -38,7 +38,7 @@ class AWSConfig {
         )
         val endpointConfiguration = AwsClientBuilder.EndpointConfiguration(
             s3Props.url,
-            awsProps.region
+            props.region
         )
         val amazonS3 = AmazonS3ClientBuilder.standard()
             .withCredentials(credentials)

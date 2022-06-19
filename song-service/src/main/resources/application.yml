@@ -31,9 +31,9 @@ spring:
       platform: postgres
   datasource:
     driverClassName: org.postgresql.Driver
-    url: ${SONG_SERVICE_DB_URL}
-    username: ${SONG_SERVICE_DB_USER}
-    password: ${SONG_SERVICE_DB_PASS}
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
     hikari:
       auto-commit: false
   flyway:
