@@ -13,10 +13,13 @@ dependencyManagement {
 }
 
 dependencies {
+    kapt "org.mapstruct:mapstruct-processor:${property("app.version.mapstruct")}"
     kapt "org.springframework:spring-context-indexer"
     kapt "org.springframework.boot:spring-boot-configuration-processor"
 
     developmentOnly "org.springframework.boot:spring-boot-devtools"
+
+    compileOnly "org.mapstruct:mapstruct:${property("app.version.mapstruct")}"
 
     runtimeOnly "org.postgresql:postgresql"
 
@@ -24,5 +27,6 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
 
+    testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "org.testcontainers:postgresql"
 }
