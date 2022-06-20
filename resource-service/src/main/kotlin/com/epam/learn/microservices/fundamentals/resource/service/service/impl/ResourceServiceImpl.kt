@@ -1,5 +1,6 @@
 package com.epam.learn.microservices.fundamentals.resource.service.service.impl
 
+import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceRepository
@@ -15,6 +16,7 @@ import java.time.Clock
 import java.time.LocalDateTime
 
 @Service
+@LogExecution
 class ResourceServiceImpl(
     private val repository: ResourceRepository,
     private val dataRepository: ResourceDataRepository,

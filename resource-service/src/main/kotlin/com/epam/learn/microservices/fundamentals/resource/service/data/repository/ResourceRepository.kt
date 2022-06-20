@@ -1,5 +1,6 @@
 package com.epam.learn.microservices.fundamentals.resource.service.data.repository
 
+import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
+@LogExecution
 interface ResourceRepository : CrudRepository<Resource, Long> {
     fun existsByFilename(filename: String): Boolean
 

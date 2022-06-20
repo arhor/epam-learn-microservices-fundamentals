@@ -2,6 +2,7 @@ package com.epam.learn.microservices.fundamentals.song.service.controller
 
 import com.epam.learn.microservices.fundamentals.dto.IdListDTO
 import com.epam.learn.microservices.fundamentals.dto.IdDTO
+import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.song.service.service.SongService
 import com.epam.learn.microservices.fundamentals.song.service.service.dto.SongDTO
 import org.springframework.http.ResponseEntity
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import javax.validation.constraints.Size
 
+@LogExecution
 @RestController
 @RequestMapping("/songs")
 class SongController(private val service: SongService) {

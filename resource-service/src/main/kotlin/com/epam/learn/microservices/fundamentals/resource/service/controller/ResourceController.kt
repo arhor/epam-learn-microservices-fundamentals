@@ -2,6 +2,7 @@ package com.epam.learn.microservices.fundamentals.resource.service.controller
 
 import com.epam.learn.microservices.fundamentals.dto.IdDTO
 import com.epam.learn.microservices.fundamentals.dto.IdListDTO
+import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
 import com.epam.learn.microservices.fundamentals.resource.service.validation.HasMediaType
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import javax.validation.constraints.Size
 
 @Validated
+@LogExecution
 @RestController
 @RequestMapping("/resources")
 class ResourceController(private val service: ResourceService) {
