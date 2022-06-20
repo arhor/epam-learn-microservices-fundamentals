@@ -12,6 +12,7 @@ pluginManagement {
 
 rootProject.name = "epam-learn-microservices-fundamentals"
 
+include ":library"
 include ":resource-processor"
 include ":resource-service"
 include ":song-service"

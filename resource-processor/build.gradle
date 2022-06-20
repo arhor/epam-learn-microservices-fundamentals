@@ -12,6 +12,7 @@ dependencies {
 
     developmentOnly "org.springframework.boot:spring-boot-devtools"
 
+    implementation project(":library")
     implementation "commons-io:commons-io:${property('app.version.commonsIO')}"
     implementation "org.apache.tika:tika-core:${property('app.version.tika')}"
     implementation "org.apache.tika:tika-parser-audiovideo-module:${property('app.version.tika')}"

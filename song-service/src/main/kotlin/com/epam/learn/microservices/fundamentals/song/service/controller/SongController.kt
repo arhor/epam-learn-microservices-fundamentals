@@ -1,7 +1,7 @@
 package com.epam.learn.microservices.fundamentals.song.service.controller
 
-import com.epam.learn.microservices.fundamentals.song.service.controller.response.IdListResponse
-import com.epam.learn.microservices.fundamentals.song.service.controller.response.IdResponse
+import com.epam.learn.microservices.fundamentals.dto.IdListDTO
+import com.epam.learn.microservices.fundamentals.dto.IdDTO
 import com.epam.learn.microservices.fundamentals.song.service.service.SongService
 import com.epam.learn.microservices.fundamentals.song.service.service.dto.SongDTO
 import org.springframework.http.ResponseEntity
@@ -22,7 +22,7 @@ class SongController(private val service: SongService) {
                 .path("/{id}")
                 .build(id)
 
-        val response = IdResponse(id)
+        val response = IdDTO(id)
 
         return ResponseEntity.created(location).body(response)
     }
@@ -35,7 +35,7 @@ class SongController(private val service: SongService) {
     @DeleteMapping
     fun deleteSongMetadata(@RequestParam @Size(max = 200) ids: List<Long>): ResponseEntity<*> {
         val deleteResourcesIds = service.deleteResources(ids)
-        val response = IdListResponse(deleteResourcesIds)
+        val response = IdListDTO(deleteResourcesIds)
 
         return ResponseEntity.ok(response)
     }

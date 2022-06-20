@@ -1,6 +1,5 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run All" type="CompoundRunConfigurationType">
-    <toRun name="test docet comp" type="docker-deploy" />
     <toRun name="Resource-Processor" type="GradleRunConfiguration" />
     <toRun name="Resource-Service" type="GradleRunConfiguration" />
     <toRun name="Song-Service" type="GradleRunConfiguration" />

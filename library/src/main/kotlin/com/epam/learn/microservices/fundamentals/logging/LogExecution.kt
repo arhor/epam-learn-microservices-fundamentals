@@ -1,4 +1,4 @@
-package com.epam.learn.microservices.fundamentals.song.service.aspect
+package com.epam.learn.microservices.fundamentals.logging
 
 @MustBeDocumented
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)

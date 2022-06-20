@@ -1,6 +1,6 @@
 package com.epam.learn.microservices.fundamentals.song.service.service.impl
 
-import com.epam.learn.microservices.fundamentals.song.service.aspect.LogExecution
+import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.song.service.data.repository.SongRepository
 import com.epam.learn.microservices.fundamentals.song.service.service.SongService
 import com.epam.learn.microservices.fundamentals.song.service.service.dto.SongDTO

@@ -1,7 +1,7 @@
 package com.epam.learn.microservices.fundamentals.resource.service.controller
 
-import com.epam.learn.microservices.fundamentals.resource.service.controller.response.IdListResponse
-import com.epam.learn.microservices.fundamentals.resource.service.controller.response.IdResponse
+import com.epam.learn.microservices.fundamentals.dto.IdDTO
+import com.epam.learn.microservices.fundamentals.dto.IdListDTO
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
 import com.epam.learn.microservices.fundamentals.resource.service.validation.HasMediaType
@@ -34,9 +34,9 @@ class ResourceController(private val service: ResourceService) {
                 .path("/{id}")
                 .build(id)
 
-        val response = IdResponse(id)
+        val dto = IdDTO(id)
 
-        return ResponseEntity.created(location).body(response)
+        return ResponseEntity.created(location).body(dto)
     }
 
     @GetMapping("/{id}", produces = ["application/octet-stream"])
@@ -56,9 +56,9 @@ class ResourceController(private val service: ResourceService) {
     @DeleteMapping
     fun deleteResources(@RequestParam @Size(max = 200) ids: List<Long>): ResponseEntity<*> {
         val deleteResourcesIds = service.deleteResources(ids)
-        val response = IdListResponse(deleteResourcesIds)
+        val dto = IdListDTO(deleteResourcesIds)
 
-        return ResponseEntity.ok(response)
+        return ResponseEntity.ok(dto)
     }
 
     private fun dtoToResponseEntity(dto: ResourceDTO): ResponseEntity<*> {

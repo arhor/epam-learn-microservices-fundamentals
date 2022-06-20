@@ -1,4 +1,4 @@
-package com.epam.learn.microservices.fundamentals.song.service.aspect
+package com.epam.learn.microservices.fundamentals.logging
 
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.ProceedingJoinPoint
@@ -8,12 +8,8 @@ import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Component
 
 @Aspect
-@Component
-@Profile("dev")
 class LoggingAspect {
 
     @Around("executionLogging()")
@@ -44,13 +40,13 @@ class LoggingAspect {
         joinPoint.componentLogger.error("An error occurred", exception)
     }
 
-    @Pointcut("within(@com.epam.learn.microservices.fundamentals.song.service.aspect.LogExecution *)")
-    private fun classLevelLogging() {
+    @Pointcut("within(@com.epam.learn.microservices.fundamentals.logging.LogExecution *)")
+    private fun annotatedClass() {
         /* no-op */
     }
 
-    @Pointcut("@annotation(com.epam.learn.microservices.fundamentals.song.service.aspect.LogExecution)")
-    private fun methodLevelLogging() {
+    @Pointcut("@annotation(com.epam.learn.microservices.fundamentals.logging.LogExecution)")
+    private fun annotatedMethod() {
         /* no-op */
     }
 
@@ -59,7 +55,7 @@ class LoggingAspect {
         /* no-op */
     }
 
-    @Pointcut("(classLevelLogging() || methodLevelLogging()) && publicMethodExecution()")
+    @Pointcut("(annotatedClass() || annotatedMethod()) && publicMethodExecution()")
     private fun executionLogging() {
         /* no-op */
     }
