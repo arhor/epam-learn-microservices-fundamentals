@@ -1,5 +1,6 @@
 package com.epam.learn.microservices.fundamentals.song.service.service.impl
 
+import com.epam.learn.microservices.fundamentals.song.service.aspect.LogExecution
 import com.epam.learn.microservices.fundamentals.song.service.data.repository.SongRepository
 import com.epam.learn.microservices.fundamentals.song.service.service.SongService
 import com.epam.learn.microservices.fundamentals.song.service.service.dto.SongDTO
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@LogExecution
 class SongServiceImpl(
     private val songMapper: SongMapper,
     private val songRepository: SongRepository,

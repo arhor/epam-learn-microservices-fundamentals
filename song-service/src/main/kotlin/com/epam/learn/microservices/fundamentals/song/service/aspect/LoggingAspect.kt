@@ -8,10 +8,12 @@ import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Aspect
 @Component
+@Profile("dev")
 class LoggingAspect {
 
     @Around("executionLogging()")
@@ -42,7 +44,22 @@ class LoggingAspect {
         joinPoint.componentLogger.error("An error occurred", exception)
     }
 
+    @Pointcut("within(@com.epam.learn.microservices.fundamentals.song.service.aspect.LogExecution *)")
+    private fun classLevelLogging() {
+        /* no-op */
+    }
+
     @Pointcut("@annotation(com.epam.learn.microservices.fundamentals.song.service.aspect.LogExecution)")
+    private fun methodLevelLogging() {
+        /* no-op */
+    }
+
+    @Pointcut("execution(public * *(..))")
+    private fun publicMethodExecution() {
+        /* no-op */
+    }
+
+    @Pointcut("(classLevelLogging() || methodLevelLogging()) && publicMethodExecution()")
     private fun executionLogging() {
         /* no-op */
     }
