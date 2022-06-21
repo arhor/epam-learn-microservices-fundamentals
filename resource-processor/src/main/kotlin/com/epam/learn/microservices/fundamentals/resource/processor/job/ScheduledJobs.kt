@@ -18,6 +18,14 @@ class ScheduledJobs(
 
     @Scheduled(initialDelay = 5, fixedRate = 60, timeUnit = TimeUnit.SECONDS)
     fun extractAndSaveMetadata() {
-        TODO("Not yet implemented")
+        val resourceIds = resourcesClient.fetchUnprocessedResourceIds()
+
+        for (resourceId in resourceIds) {
+            val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
+            val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
+
+            songsClient.persistMetadata(metadata)
+            resourcesClient.updateResourceStatus(resourceId, "COMPLETE")
+        }
     }
 }

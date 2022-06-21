@@ -1,3 +1,8 @@
 package com.epam.learn.microservices.fundamentals.resource.processor.client
 
-interface SongServiceClient
+import com.epam.learn.microservices.fundamentals.resource.processor.model.ResourceMetadata
+
+interface SongServiceClient {
+
+    fun persistMetadata(metadata: ResourceMetadata)
+}

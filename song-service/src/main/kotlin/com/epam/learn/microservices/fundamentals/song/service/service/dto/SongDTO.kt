@@ -4,10 +4,10 @@ import java.time.Duration
 import java.time.Year
 
 data class SongDTO(
-    val year: Year?,
     val name: String?,
+    val year: String?,
     val album: String?,
     val artist: String?,
-    val length: Duration,
+    val length: String?,
     val resourceId: Long,
 )

@@ -2,10 +2,12 @@ package com.epam.learn.microservices.fundamentals.resource.service.service.impl
 
 import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource
+import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource.ProcessingStatus.PENDING
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceRepository
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
+import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceUpdateDTO
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityDuplicateException
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityNotFoundException
 import org.springframework.data.repository.findByIdOrNull
@@ -57,25 +59,28 @@ class ResourceServiceImpl(
     }
 
     @Transactional
-    override fun getUnprocessedResource(): ResourceDTO {
-        val filename = repository.findUnprocessedResourceFilename()
-            ?: throw EntityNotFoundException("status = ${Resource.ProcessingStatus.NONE}")
-
-        repository.updateResourceStatus(Resource.ProcessingStatus.PENDING, filename)
-
-        val (data, size) = dataRepository.download(filename)
-
-        return ResourceDTO(
-            filename = filename,
-            data = data,
-            size = size,
-        )
+    override fun getUnprocessedResourceIds(): List<Long> {
+        return repository.findUnprocessedResources().let { resources ->
+            if (resources.isNotEmpty()) {
+                val ids = ArrayList<Long>()
+                for (resource in resources) {
+                    resource.apply {
+                        id?.let(ids::add)
+                        status = PENDING
+                    }
+                }
+                repository.saveAll(resources)
+                ids
+            } else {
+                emptyList()
+            }
+        }
     }
 
     @Transactional
     override fun resetOutdatedPendingResourcesStatus(): Int {
-        val deadline = LocalDateTime.now(Clock.systemUTC()).minusHours(1)
-        val outdatedResources = repository.findOutdatedPendingResourcesFilenames(deadline)
+        val deadline = LocalDateTime.now(Clock.systemUTC()).minusMinutes(10)
+        val outdatedResources = repository.findOutdatedPendingResourcesIds(deadline)
 
         val rowsUpdated = if (outdatedResources.isNotEmpty()) {
             repository.updateResourcesStatus(Resource.ProcessingStatus.NONE, outdatedResources)
@@ -107,6 +112,16 @@ class ResourceServiceImpl(
         } else {
             emptyList()
         }
+    }
+
+    @Transactional
+    override fun updateResource(id: Long, dto: ResourceUpdateDTO) {
+        val resource = repository.findByIdOrNull(id)
+            ?: throw EntityNotFoundException("id = $id")
+
+        resource.status = Resource.ProcessingStatus.valueOf(dto.status)
+
+        repository.save(resource)
     }
 
     private fun saveResourceInternal(filename: String, data: InputStream, size: Long): Long {

@@ -1,6 +1,7 @@
 package com.epam.learn.microservices.fundamentals.resource.service.service
 
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
+import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceUpdateDTO
 
 interface ResourceService {
 
@@ -10,9 +11,10 @@ interface ResourceService {
 
     fun getResource(id: Long): ResourceDTO
 
-    fun getUnprocessedResource(): ResourceDTO
+    fun getUnprocessedResourceIds(): List<Long>
 
     fun resetOutdatedPendingResourcesStatus(): Int
 
     fun deleteResources(ids: Iterable<Long>): Iterable<Long>
+    fun updateResource(id: Long, dto: ResourceUpdateDTO)
 }

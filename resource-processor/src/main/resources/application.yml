@@ -26,3 +26,7 @@ spring:
   output:
     ansi:
       enabled: detect
+
+configuration:
+  resource-service-url: ${RESOURCE_SERVICE_URL}
+  song-service-url: ${SONG_SERVICE_URL}

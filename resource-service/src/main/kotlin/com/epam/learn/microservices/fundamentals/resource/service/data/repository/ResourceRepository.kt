@@ -5,6 +5,7 @@ import com.epam.learn.microservices.fundamentals.resource.service.data.model.Res
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -15,31 +16,31 @@ interface ResourceRepository : CrudRepository<Resource, Long> {
 
     @Query(
         """
-        SELECT r.filename
+        SELECT r.*
         FROM resources r
         WHERE r.status = 'NONE'
         ORDER BY r.created DESC
-        LIMIT 1 FOR UPDATE SKIP LOCKED
+        LIMIT 50 FOR UPDATE SKIP LOCKED
         """
     )
-    fun findUnprocessedResourceFilename(): String?
+    fun findUnprocessedResources(): List<Resource>
 
     @Query(
         """
-        SELECT r.filename
+        SELECT r.id
         FROM resources r
         WHERE r.status = 'PENDING'
-          AND r.updated >= :deadline
+          AND r.updated <= :deadline
         FOR UPDATE SKIP LOCKED
         """
     )
-    fun findOutdatedPendingResourcesFilenames(deadline: LocalDateTime): List<String>
+    fun findOutdatedPendingResourcesIds(@Param("deadline") deadline: LocalDateTime): List<Long>
 
     @Modifying
-    @Query("UPDATE resources SET status = :status WHERE filename = :filename")
-    fun updateResourceStatus(status: Resource.ProcessingStatus, filename: String)
+    @Query("UPDATE resources SET status = :status WHERE id = :id")
+    fun updateResourceStatus(@Param("status") status: Resource.ProcessingStatus, id: Long)
 
     @Modifying
-    @Query("UPDATE resources SET status = :status WHERE filename IN :filenames")
-    fun updateResourcesStatus(status: Resource.ProcessingStatus, filenames: List<String>): Int
+    @Query("UPDATE resources SET status = :status WHERE id IN (:ids)")
+    fun updateResourcesStatus(@Param("status") status: Resource.ProcessingStatus, @Param("ids") ids: List<Long>): Int
 }

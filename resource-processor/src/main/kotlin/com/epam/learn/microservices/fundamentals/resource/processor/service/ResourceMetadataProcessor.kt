@@ -5,5 +5,5 @@ import java.io.InputStream
 
 interface ResourceMetadataProcessor {
 
-    fun extractMetadata(data: InputStream): ResourceMetadata
+    fun extractMetadata(resourceId: Long, data: InputStream): ResourceMetadata
 }

@@ -12,11 +12,11 @@ class Song(
     @Column("id")
     var id: Long? = null,
 
-    @Column("year")
-    var year: Year? = null,
-
     @Column("name")
     var name: String? = null,
+
+    @Column("year")
+    var year: String? = null,
 
     @Column("album")
     var album: String? = null,
@@ -25,7 +25,7 @@ class Song(
     var artist: String? = null,
 
     @Column("length")
-    var length: Duration,
+    var length: String? = null,
 
     @Column("resource_id")
     var resourceId: Long,
