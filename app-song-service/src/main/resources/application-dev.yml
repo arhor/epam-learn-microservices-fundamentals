@@ -1,0 +1,8 @@
+spring:
+  devtools:
+    livereload:
+      port: 35732
+  config:
+    import:
+      - optional:file:.env.local[.properties]
+      - optional:file:app-song-service/.env.local[.properties]

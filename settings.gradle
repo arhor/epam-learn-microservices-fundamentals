@@ -1,0 +1,18 @@
+// @formatter:off
+pluginManagement {
+    plugins {
+        id "org.springframework.boot"            version settings["app.version.springBoot"]
+        id "io.spring.dependency-management"     version settings["app.version.springDependencyManagement"]
+        id "org.jetbrains.kotlin.kapt"           version settings["app.version.kotlin"]
+        id "org.jetbrains.kotlin.jvm"            version settings["app.version.kotlin"]
+        id "org.jetbrains.kotlin.plugin.spring"  version settings["app.version.kotlin"]
+    }
+}
+// @formatter:on
+
+rootProject.name = "epam-learn-microservices-fundamentals"
+
+include ":app-resource-processor"
+include ":app-resource-service"
+include ":app-song-service"
+include ":lib-commons"
