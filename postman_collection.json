@@ -1,0 +1,70 @@
+{
+    "info": {
+        "name": "epam-learn-microservices-fundamentals",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "resourceServiceBaseUrl",
+            "value": "http://localhost:5001/api/resources"
+        },
+        {
+            "key": "songServiceBaseUrl",
+            "value": "http://localhost:5002/api/songs"
+        }
+    ],
+    "item": [
+        {
+            "name": "Resources API",
+            "item": [
+                {
+                    "name": "Create resource",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{resourceServiceBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Get resource",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{resourceServiceBaseUrl}}/1"
+                    }
+                },
+                {
+                    "name": "Delete resources by id list",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{resourceServiceBaseUrl}}?ids=1,2,3"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Songs API",
+            "item": [
+                {
+                    "name": "Create song metadata",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{songServiceBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Get song metadata",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{songServiceBaseUrl}}/1"
+                    }
+                },
+                {
+                    "name": "Delete songs by id list",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{songServiceBaseUrl}}?ids=1,2,3"
+                    }
+                }
+            ]
+        }
+    ]
+}
