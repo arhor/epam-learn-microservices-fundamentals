@@ -1,10 +1,13 @@
 package com.epam.learn.microservices.fundamentals.resource.service.config
 
+import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.client.builder.AwsClientBuilder
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import com.amazonaws.services.sqs.AmazonSQS
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.context.annotation.Bean
@@ -16,38 +19,56 @@ class AWSConfig {
     @ConstructorBinding
     @ConfigurationProperties("configuration.aws")
     data class Props(
+        val url: String,
         val region: String,
+        val accessKey: String,
+        val secretKey: String,
     )
 
     @ConstructorBinding
     @ConfigurationProperties("configuration.aws.s3")
     data class S3Props(
-        val url: String,
         val bucket: String,
-        val accessKey: String,
-        val secretKey: String,
     )
 
     @Bean
-    fun amazonS3(props: Props, s3Props: S3Props): AmazonS3 {
-        val credentials = AWSStaticCredentialsProvider(
+    fun amazonS3(
+        s3Props: S3Props,
+        credentialsProvider: AWSCredentialsProvider,
+        endpointConfiguration: EndpointConfiguration,
+    ): AmazonS3 = AmazonS3ClientBuilder
+        .standard()
+        .withCredentials(credentialsProvider)
+        .withEndpointConfiguration(endpointConfiguration)
+        .build()
+        .also { it.createBucketIfNotExists(s3Props.bucket) }
+
+    @Bean
+    fun amazonSQS(
+        credentialsProvider: AWSCredentialsProvider,
+        endpointConfiguration: EndpointConfiguration,
+    ): AmazonSQS = AmazonSQSClientBuilder
+        .standard()
+        .withCredentials(credentialsProvider)
+        .withEndpointConfiguration(endpointConfiguration)
+        .build()
+
+    @Bean
+    fun awsCredentialsProvider(props: Props): AWSCredentialsProvider {
+        return AWSStaticCredentialsProvider(
             BasicAWSCredentials(
-                s3Props.accessKey,
-                s3Props.secretKey,
+                props.accessKey,
+                props.secretKey,
             )
         )
-        val endpointConfiguration = AwsClientBuilder.EndpointConfiguration(
-            s3Props.url,
-            props.region
+    }
+
+    @Bean
+    fun endpointConfiguration(props: Props): EndpointConfiguration {
+        return EndpointConfiguration(
+            props.url,
+            props.region,
         )
-        val amazonS3 = AmazonS3ClientBuilder.standard()
-            .withCredentials(credentials)
-            .withEndpointConfiguration(endpointConfiguration)
-            .build()
-
-        amazonS3.createBucketIfNotExists(s3Props.bucket)
-
-        return amazonS3
     }
 
     private fun AmazonS3.createBucketIfNotExists(bucket: String) {

@@ -51,9 +51,10 @@ spring:
 
 configuration:
   aws:
-    region: ${AWS_DEFAULT_REGION}
+    url: ${AWS_URL}
+    region: ${AWS_REGION}
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
     s3:
-      url: ${AWS_S3_URL}
       bucket: ${AWS_S3_BUCKET_NAME}
-      access-key: ${AWS_S3_ACCESS_KEY}
-      secret-key: ${AWS_S3_SECRET_KEY}
+
