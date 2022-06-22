@@ -12,7 +12,7 @@ dependencies {
 
     developmentOnly "org.springframework.boot:spring-boot-devtools"
 
-    implementation project(":library")
+    implementation project(":lib-commons")
     implementation "commons-io:commons-io:${property('app.version.commonsIO')}"
     implementation "org.apache.httpcomponents:httpclient:${property('app.version.httpclient')}"
     implementation "org.apache.tika:tika-core:${property('app.version.tika')}"

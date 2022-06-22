@@ -7,7 +7,7 @@ services:
     ports:
       - '4566-4583:4566-4583'
     env_file:
-      - resource-service/.env.local
+      - app-resource-service/.env.local
     volumes:
       - ${TEMPDIR:-/tmp/localstack}:/tmp/localstack
       - /var/run/docker.sock:/var/run/docker.sock
@@ -20,7 +20,7 @@ services:
     volumes:
       - resource-service-db-data:/var/lib/postgresql/data
     env_file:
-      - resource-service/.env.local
+      - app-resource-service/.env.local
 
   song-service-db:
     image: postgres:12
@@ -30,7 +30,7 @@ services:
     volumes:
       - song-service-db-data:/var/lib/postgresql/data
     env_file:
-      - song-service/.env.local
+      - app-song-service/.env.local
 
 volumes:
   resource-service-db-data:

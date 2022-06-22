@@ -5,4 +5,4 @@ spring:
   config:
     import:
       - optional:file:.env.local[.properties]
-      - optional:file:song-service/.env.local[.properties]
+      - optional:file:app-song-service/.env.local[.properties]

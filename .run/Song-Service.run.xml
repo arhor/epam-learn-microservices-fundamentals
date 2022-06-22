@@ -2,7 +2,7 @@
   <configuration default="false" name="Song-Service" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/song-service" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/app-song-service" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="" />
       <option name="taskDescriptions">

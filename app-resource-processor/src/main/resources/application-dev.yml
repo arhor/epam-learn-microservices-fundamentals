@@ -1,8 +1,8 @@
 spring:
   devtools:
     livereload:
-      port: 35731
+      port: 35730
   config:
     import:
       - optional:file:.env.local[.properties]
-      - optional:file:resource-service/.env.local[.properties]
+      - optional:file:app-resource-processor/.env.local[.properties]

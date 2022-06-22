@@ -21,7 +21,7 @@ dependencies {
     runtimeOnly "org.glassfish.jaxb:jaxb-runtime"
     runtimeOnly "org.postgresql:postgresql"
 
-    implementation project(":library")
+    implementation project(":lib-commons")
     implementation "com.amazonaws:aws-java-sdk-s3:${property('app.version.awsJavaSdk')}"
     implementation "org.flywaydb:flyway-core"
     implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
