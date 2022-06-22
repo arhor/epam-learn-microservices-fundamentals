@@ -34,8 +34,12 @@ class SongServiceImpl(
             ?: throw EntityNotFoundException("id = $id")
     }
 
+    override fun getSongsMetadataByResourceIds(resources: List<Long>): List<SongDTO> {
+        return songRepository.findAllByResourceIdIn(resources).map(songMapper::mapEntityToDto)
+    }
+
     @Transactional
-    override fun deleteResources(ids: List<Long>): List<Long> {
+    override fun deleteSongMetadata(ids: List<Long>): List<Long> {
         val existingSongIds = songRepository.findAllById(ids).mapNotNull { it.id }
         songRepository.deleteAllById(existingSongIds)
         return existingSongIds

@@ -29,14 +29,19 @@ class SongController(private val service: SongService) {
         return ResponseEntity.created(location).body(response)
     }
 
+    @GetMapping
+    fun getSongsMetadata(@RequestParam resources: List<Long>): List<SongDTO> {
+        return service.getSongsMetadataByResourceIds(resources)
+    }
+
     @GetMapping("/{id}")
-    fun getSongMetadata(@PathVariable id: Long): SongDTO {
+    fun getSongMetadataById(@PathVariable id: Long): SongDTO {
         return service.getSongMetadata(id)
     }
 
     @DeleteMapping
     fun deleteSongMetadata(@RequestParam @Size(max = 200) ids: List<Long>): ResponseEntity<*> {
-        val deleteResourcesIds = service.deleteResources(ids)
+        val deleteResourcesIds = service.deleteSongMetadata(ids)
         val response = IdListDTO(deleteResourcesIds)
 
         return ResponseEntity.ok(response)

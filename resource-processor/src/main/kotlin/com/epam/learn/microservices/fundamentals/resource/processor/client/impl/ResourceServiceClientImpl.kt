@@ -48,7 +48,7 @@ class ResourceServiceClientImpl(
         restTemplate.patchForObject(
             "$baseURL/$id",
             mapOf("status" to status),
-            Map::class.java
+            String::class.java
         )
     }
 

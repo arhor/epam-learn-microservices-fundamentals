@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 interface SongRepository : CrudRepository<Song, Long> {
 
     fun existsByResourceId(resourceId: Long): Boolean
+
+    fun findAllByResourceIdIn(resourceIds: List<Long>): List<Song>
 }

@@ -21,10 +21,12 @@ class ScheduledJobs(
         val resourceIds = resourcesClient.fetchUnprocessedResourceIds()
 
         for (resourceId in resourceIds) {
-            val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
-            val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
+            if (!songsClient.songMetadataExists(resourceId)) {
+                val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
+                val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
 
-            songsClient.persistMetadata(metadata)
+                songsClient.persistMetadata(metadata)
+            }
             resourcesClient.updateResourceStatus(resourceId, "COMPLETE")
         }
     }

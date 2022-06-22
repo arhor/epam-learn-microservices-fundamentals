@@ -7,5 +7,7 @@ interface SongService {
 
     fun getSongMetadata(id: Long): SongDTO
 
-    fun deleteResources(ids: List<Long>): List<Long>
+    fun getSongsMetadataByResourceIds(resources: List<Long>): List<SongDTO>
+
+    fun deleteSongMetadata(ids: List<Long>): List<Long>
 }
