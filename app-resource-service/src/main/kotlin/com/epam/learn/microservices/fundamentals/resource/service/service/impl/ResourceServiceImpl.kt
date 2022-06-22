@@ -8,8 +8,10 @@ import com.epam.learn.microservices.fundamentals.resource.service.data.repositor
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceUpdateDTO
+import com.epam.learn.microservices.fundamentals.resource.service.service.event.ResourceCreatedEvent
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityDuplicateException
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityNotFoundException
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,6 +24,7 @@ import java.time.LocalDateTime
 class ResourceServiceImpl(
     private val repository: ResourceRepository,
     private val dataRepository: ResourceDataRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : ResourceService {
 
     @Transactional
@@ -137,6 +140,10 @@ class ResourceServiceImpl(
                 it.status = Resource.ProcessingStatus.NONE
             }
         )
-        return resource.id ?: throw IllegalStateException("Saved resource must have an ID")
+        val resourceId = resource.id ?: throw IllegalStateException("Saved resource must have an ID")
+
+        applicationEventPublisher.publishEvent(ResourceCreatedEvent(resourceId))
+
+        return resourceId
     }
 }

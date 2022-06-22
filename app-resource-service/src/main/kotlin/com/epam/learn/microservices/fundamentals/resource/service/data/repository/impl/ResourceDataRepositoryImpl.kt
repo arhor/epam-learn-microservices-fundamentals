@@ -5,10 +5,11 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.epam.learn.microservices.fundamentals.logging.LogExecution
-import com.epam.learn.microservices.fundamentals.resource.service.config.AWSConfig.S3Props
+import com.epam.learn.microservices.fundamentals.resource.service.config.props.S3Props
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import org.springframework.stereotype.Repository
 import java.io.InputStream
+import javax.annotation.PostConstruct
 
 @Repository
 @LogExecution
@@ -16,6 +17,15 @@ class ResourceDataRepositoryImpl(
     private val s3Client: AmazonS3,
     private val s3Props: S3Props,
 ) : ResourceDataRepository {
+
+    @PostConstruct
+    fun init() {
+        val shouldCreateBucket = !s3Client.doesBucketExistV2(s3Props.bucket)
+
+        if (shouldCreateBucket) {
+            s3Client.createBucket(s3Props.bucket)
+        }
+    }
 
     override fun upload(filename: String, data: InputStream, size: Long) {
         s3Client.putObject(
