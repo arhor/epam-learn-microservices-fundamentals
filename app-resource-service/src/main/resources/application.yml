@@ -18,6 +18,13 @@ spring:
     active: ${SPRING_ACTIVE_PROFILES:dev}
   jmx:
     enabled: false
+  jms:
+    template:
+      default-destination: ${AWS_SQS_QUEUE_NAME}
+    listener:
+      acknowledge-mode: CLIENT
+      concurrency: 3
+      max-concurrency: 10
   mvc:
     throw-exception-if-no-handler-found: true
   autoconfigure:
@@ -59,4 +66,3 @@ configuration:
       bucket: ${AWS_S3_BUCKET_NAME}
     sqs:
       queue: ${AWS_SQS_QUEUE_NAME}
-

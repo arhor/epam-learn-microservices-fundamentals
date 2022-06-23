@@ -1,4 +1,4 @@
-package com.epam.learn.microservices.fundamentals.resource.service.config
+package com.epam.learn.microservices.fundamentals.resource.processor.config
 
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
 import org.springframework.context.annotation.Bean

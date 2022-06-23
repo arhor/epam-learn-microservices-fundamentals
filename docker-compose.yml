@@ -11,6 +11,7 @@ services:
     volumes:
       - ${TEMPDIR:-/tmp/localstack}:/tmp/localstack
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./scripts/localstack:/docker-entrypoint-initaws.d/
 
   resource-service-db:
     image: postgres:12
