@@ -4,7 +4,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties("configuration.aws.sqs")
-data class SQSProps(
-    val queue: String,
+@ConfigurationProperties("configuration.aws")
+data class AwsProps(
+    val url: String,
+    val region: String,
+    val accessKey: String,
+    val secretKey: String,
 )

@@ -20,7 +20,7 @@ spring:
     enabled: false
   jms:
     template:
-      default-destination: ${AWS_SQS_QUEUE_NAME}
+      default-destination: ${configuration.aws.sqs.queue}
     listener:
       acknowledge-mode: CLIENT
       concurrency: 3

@@ -11,11 +11,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder
 import com.epam.learn.microservices.fundamentals.resource.service.config.props.AWSProps
-import com.epam.learn.microservices.fundamentals.resource.service.config.props.SQSProps
-import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.lang.invoke.MethodHandles
 import javax.jms.ConnectionFactory
 
 @Configuration(proxyBeanMethods = false)

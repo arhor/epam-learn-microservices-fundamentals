@@ -15,7 +15,7 @@ class ResourceCreatedEventListener(
     private val metadataProcessor: ResourceMetadataProcessor,
 ) {
 
-    @JmsListener(destination = "resource-created-events")
+    @JmsListener(destination = "\${configuration.aws.sqs.queue}")
     fun processCreatedResource(resourceId: Long) {
         val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
         val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)

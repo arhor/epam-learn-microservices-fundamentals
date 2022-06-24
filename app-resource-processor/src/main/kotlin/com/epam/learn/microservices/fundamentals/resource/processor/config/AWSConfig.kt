@@ -8,14 +8,13 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder
-import com.epam.learn.microservices.fundamentals.resource.processor.config.props.AWSProps
-import com.epam.learn.microservices.fundamentals.resource.processor.config.props.SQSProps
+import com.epam.learn.microservices.fundamentals.resource.processor.config.props.AwsProps
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import javax.jms.ConnectionFactory
 
 @Configuration(proxyBeanMethods = false)
-class AWSConfig(private val awsProps: AWSProps) {
+class AWSConfig(private val awsProps: AwsProps) {
 
     @Bean
     fun amazonSQS(credentials: AWSCredentialsProvider, endpointConfiguration: EndpointConfiguration): AmazonSQS {
