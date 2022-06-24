@@ -1,19 +1,25 @@
 package com.epam.learn.microservices.fundamentals.resource.processor.listener
 
-import org.slf4j.LoggerFactory
+import com.epam.learn.microservices.fundamentals.logging.LogExecution
+import com.epam.learn.microservices.fundamentals.resource.processor.client.ResourceServiceClient
+import com.epam.learn.microservices.fundamentals.resource.processor.client.SongServiceClient
+import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceMetadataProcessor
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Component
-import java.lang.invoke.MethodHandles
 
 @Component
-class ResourceCreatedEventListener {
+@LogExecution
+class ResourceCreatedEventListener(
+    private val songsClient: SongServiceClient,
+    private val resourcesClient: ResourceServiceClient,
+    private val metadataProcessor: ResourceMetadataProcessor,
+) {
 
     @JmsListener(destination = "resource-created-events")
-    fun processCreatedResource(message: String) {
-        log.info("Received message: {}", message)
-    }
+    fun processCreatedResource(resourceId: Long) {
+        val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
+        val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
 
-    companion object {
-        private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
+        songsClient.persistMetadata(metadata)
     }
 }

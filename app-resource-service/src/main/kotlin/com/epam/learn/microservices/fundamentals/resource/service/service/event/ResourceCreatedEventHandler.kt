@@ -9,6 +9,6 @@ class ResourceCreatedEventHandler(private val jmsTemplate: JmsTemplate) {
 
     @EventListener(ResourceCreatedEvent::class)
     fun publishEvent(event: ResourceCreatedEvent) {
-        jmsTemplate.convertAndSend(event)
+        jmsTemplate.convertAndSend(event.id)
     }
 }

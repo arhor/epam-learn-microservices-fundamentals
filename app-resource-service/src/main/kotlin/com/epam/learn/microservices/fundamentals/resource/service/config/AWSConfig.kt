@@ -19,7 +19,7 @@ import java.lang.invoke.MethodHandles
 import javax.jms.ConnectionFactory
 
 @Configuration(proxyBeanMethods = false)
-class AWSConfig(private val awsProps: AWSProps, private val sqsProps: SQSProps) {
+class AWSConfig(private val awsProps: AWSProps) {
 
     @Bean
     fun amazonS3(credentials: AWSCredentialsProvider, endpointConfiguration: EndpointConfiguration): AmazonS3 {

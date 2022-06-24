@@ -12,9 +12,10 @@ import com.epam.learn.microservices.fundamentals.resource.processor.config.props
 import com.epam.learn.microservices.fundamentals.resource.processor.config.props.SQSProps
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import javax.jms.ConnectionFactory
 
 @Configuration(proxyBeanMethods = false)
-class AWSConfig(private val awsProps: AWSProps, private val sqsProps: SQSProps) {
+class AWSConfig(private val awsProps: AWSProps) {
 
     @Bean
     fun amazonSQS(credentials: AWSCredentialsProvider, endpointConfiguration: EndpointConfiguration): AmazonSQS {
@@ -44,7 +45,7 @@ class AWSConfig(private val awsProps: AWSProps, private val sqsProps: SQSProps) 
     }
 
     @Bean
-    fun sqsConnectionFactory(amazonSQS: AmazonSQS): SQSConnectionFactory {
+    fun sqsConnectionFactory(amazonSQS: AmazonSQS): ConnectionFactory {
         return SQSConnectionFactory(ProviderConfiguration(), amazonSQS)
     }
 }

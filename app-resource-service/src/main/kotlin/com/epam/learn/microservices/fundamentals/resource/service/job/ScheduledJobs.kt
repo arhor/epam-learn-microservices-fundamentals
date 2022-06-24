@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 @Component
 class ScheduledJobs(private val service: ResourceService) {
 
-    @Scheduled(initialDelay = 10, fixedRate = 300, timeUnit = TimeUnit.SECONDS)
+//    @Scheduled(initialDelay = 10, fixedRate = 300, timeUnit = TimeUnit.SECONDS)
     fun extractAndSaveMetadata() {
         log.info("Resetting outdated pending resources")
         val resourcesUpdated = service.resetOutdatedPendingResourcesStatus()

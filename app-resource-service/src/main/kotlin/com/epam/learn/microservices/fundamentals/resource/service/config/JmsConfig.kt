@@ -1,17 +1,28 @@
 package com.epam.learn.microservices.fundamentals.resource.service.config
 
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
+import org.springframework.boot.autoconfigure.jms.JmsProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory
+import org.springframework.jms.config.JmsListenerContainerFactory
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter
 import org.springframework.jms.support.converter.MessageConverter
 import org.springframework.jms.support.converter.MessageType
 import org.springframework.jms.support.destination.DestinationResolver
 import org.springframework.jms.support.destination.DynamicDestinationResolver
+import javax.jms.ConnectionFactory
+import javax.jms.ExceptionListener
 
+/**
+ * @see org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
+ */
 @Import(JmsAutoConfiguration::class)
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(JmsProperties::class)
 class JmsConfig {
 
     @Bean
@@ -24,6 +35,48 @@ class JmsConfig {
         return MappingJackson2MessageConverter().apply {
             setTargetType(MessageType.TEXT)
             setTypeIdPropertyName("_type")
+        }
+    }
+
+    /**
+     * JmsListenerContainerFactory configured manually since autoconfiguration
+     * provided factory set to be transacted which is unsupported by Amazon SQS.
+     */
+    @Bean
+    fun jmsListenerContainerFactory(
+        connectionFactory: ConnectionFactory,
+        destinationResolver: ObjectProvider<DestinationResolver>,
+        messageConverter: ObjectProvider<MessageConverter>,
+        exceptionListener: ObjectProvider<ExceptionListener>,
+        properties: JmsProperties,
+    ): JmsListenerContainerFactory<*> {
+        return DefaultJmsListenerContainerFactory().apply {
+
+            setConnectionFactory(connectionFactory)
+
+            destinationResolver.ifUnique {
+                setDestinationResolver(it)
+            }
+            messageConverter.ifUnique {
+                setMessageConverter(it)
+            }
+            exceptionListener.ifUnique {
+                setExceptionListener(it)
+            }
+
+            properties.listener.let { listener ->
+                setAutoStartup(listener.isAutoStartup)
+
+                listener.acknowledgeMode?.let {
+                    setSessionAcknowledgeMode(it.mode)
+                }
+                listener.formatConcurrency()?.let {
+                    setConcurrency(it)
+                }
+                listener.receiveTimeout?.let {
+                    setReceiveTimeout(it.toMillis())
+                }
+            }
         }
     }
 }
