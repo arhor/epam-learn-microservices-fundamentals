@@ -13,25 +13,20 @@ import org.slf4j.LoggerFactory
 class LoggingAspect {
 
     @Around("executionLogging()")
-    fun logMethodExecution(joinPoint: ProceedingJoinPoint): Any? {
-        val log = joinPoint.componentLogger
-        if (log.isDebugEnabled) {
+    fun logMethodExecution(joinPoint: ProceedingJoinPoint, annotation: LogExecution): Any? {
+        val logger = joinPoint.componentLogger
+
+        return if (logger.isLevelEnabled(annotation.level)) {
             val signature = joinPoint.signature
             val signatureName = "${signature.declaringType.simpleName}.${signature.name}()"
-            log.debug(
-                "Method: {}, Args: {}",
-                signatureName,
-                joinPoint.args.joinToString()
-            )
+
+            logger.log(annotation.level, "Method: {}, Args: {}", signatureName, joinPoint.args.joinToString())
             val result = joinPoint.proceed()
-            log.debug(
-                "Method: {}, Result: {}",
-                signatureName,
-                result
-            )
-            return result
+            logger.log(annotation.level, "Method: {}, Result: {}", signatureName, result)
+
+            result
         } else {
-            return joinPoint.proceed()
+            joinPoint.proceed()
         }
     }
 
@@ -62,5 +57,19 @@ class LoggingAspect {
 
     private val JoinPoint.componentLogger: Logger
         get() = LoggerFactory.getLogger(signature.declaringTypeName)
+
+    private fun Logger.isLevelEnabled(level: LogExecution.Level): Boolean {
+        return when (level) {
+            LogExecution.Level.DEBUG -> isDebugEnabled
+            LogExecution.Level.INFO -> isInfoEnabled
+        }
+    }
+
+    private fun Logger.log(level: LogExecution.Level, format: String, vararg arguments: Any) {
+        when (level) {
+            LogExecution.Level.DEBUG -> debug(format, *arguments)
+            LogExecution.Level.INFO -> info(format, *arguments)
+        }
+    }
 }
 
