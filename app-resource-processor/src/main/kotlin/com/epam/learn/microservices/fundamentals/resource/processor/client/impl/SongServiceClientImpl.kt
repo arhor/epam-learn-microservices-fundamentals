@@ -4,8 +4,6 @@ import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.processor.client.SongServiceClient
 import com.epam.learn.microservices.fundamentals.resource.processor.model.ResourceMetadata
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
@@ -17,23 +15,10 @@ class SongServiceClientImpl(private val restTemplate: RestTemplate) : SongServic
     lateinit var songServiceUrl: String
 
     override fun persistMetadata(metadata: ResourceMetadata) {
-        restTemplate.postForObject(
-            songServiceUrl,
-            metadata,
-            String::class.java
-        )
+        restTemplate.postForObject(songServiceUrl, metadata, String::class.java)
     }
 
-    override fun songMetadataExists(resourceId: Long): Boolean {
-        val result = restTemplate.exchange(
-            "$songServiceUrl?resources=$resourceId",
-            HttpMethod.GET,
-            null,
-            ResourceMetadataList
-        )
-        return result.body?.let { resources -> resources.any { it.resourceId == resourceId } }
-            ?: false
+    override fun deleteSongsMetadata(resourceIds: List<Long>) {
+        restTemplate.delete("${songServiceUrl}?resources={ids}", resourceIds.joinToString())
     }
-
-    private object ResourceMetadataList : ParameterizedTypeReference<List<ResourceMetadata>>()
 }

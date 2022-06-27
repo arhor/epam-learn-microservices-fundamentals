@@ -4,6 +4,8 @@ import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.processor.client.ResourceServiceClient
 import com.epam.learn.microservices.fundamentals.resource.processor.client.SongServiceClient
 import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceEvent
+import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceEvent.Type.CREATED
+import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceEvent.Type.DELETED
 import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceMetadataProcessor
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.jms.annotation.JmsListener
@@ -22,16 +24,22 @@ class ResourceCreatedEventListener(
         val event = objectMapper.readValue(data, ResourceEvent::class.java)
 
         when (event.type) {
-            ResourceEvent.Type.CREATED -> {
-                val resourceId = event.id
+            CREATED -> {
+                val resourceId = event.payload.unwrapResourceId()
                 val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
                 val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
 
                 songsClient.persistMetadata(metadata)
             }
-            ResourceEvent.Type.DELETED -> TODO("Not yet implemented")
+            DELETED -> {
+                val deletedResourceIds = (event.payload as List<*>).map { it.unwrapResourceId() }
+
+                songsClient.deleteSongsMetadata(deletedResourceIds)
+            }
         }
     }
+
+    private fun Any?.unwrapResourceId() = (this as Number).toLong()
 
     companion object {
         private val objectMapper = jacksonObjectMapper()

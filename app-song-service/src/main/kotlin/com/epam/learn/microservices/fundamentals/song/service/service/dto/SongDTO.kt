@@ -1,8 +1,5 @@
 package com.epam.learn.microservices.fundamentals.song.service.service.dto
 
-import java.time.Duration
-import java.time.Year
-
 data class SongDTO(
     val name: String?,
     val year: String?,

@@ -11,12 +11,7 @@ import org.springframework.stereotype.Component
 class ResourceEventPublisherImpl(private val jmsTemplate: JmsTemplate) : ResourceEventPublisher {
 
     @Retry(name = "resource-events")
-    override fun resourceCreated(id: Long) {
-        jmsTemplate.convertAndSend(id)
-    }
-
-    @Retry(name = "resource-events")
-    override fun publishEvent(event: ResourceEvent) {
+    override fun publishEvent(event: ResourceEvent<*>) {
         jmsTemplate.convertAndSend(
             objectMapper.writeValueAsBytes(
                 event

@@ -5,6 +5,7 @@ import com.epam.learn.microservices.fundamentals.resource.service.data.model.Res
 import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource.ProcessingStatus.PENDING
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceRepository
+import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEvent
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEventPublisher
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
@@ -100,6 +101,7 @@ class ResourceServiceImpl(
                 Resource::filename,
                 Resource::id,
             )
+
         return if (resourceIdsByFilename.isNotEmpty()) {
             val deletedResourceIds =
                 dataRepository.delete(resourceIdsByFilename.keys.filterNotNull())
@@ -109,6 +111,12 @@ class ResourceServiceImpl(
 
             if (deletedResourceIds.isNotEmpty()) {
                 repository.deleteAllById(deletedResourceIds)
+
+                resourceEventPublisher.publishEvent(
+                    ResourceEvent.Deleted(
+                        payload = deletedResourceIds
+                    )
+                )
             }
             deletedResourceIds
         } else {
@@ -141,7 +149,11 @@ class ResourceServiceImpl(
         )
         val resourceId = resource.id ?: throw IllegalStateException("Saved resource must have an ID")
 
-        resourceEventPublisher.resourceCreated(resourceId)
+        resourceEventPublisher.publishEvent(
+            ResourceEvent.Created(
+                payload = resourceId
+            )
+        )
 
         return resourceId
     }

@@ -1,7 +1,7 @@
 package com.epam.learn.microservices.fundamentals.song.service.controller
 
-import com.epam.learn.microservices.fundamentals.dto.IdListDTO
 import com.epam.learn.microservices.fundamentals.dto.IdDTO
+import com.epam.learn.microservices.fundamentals.dto.IdListDTO
 import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.song.service.service.SongService
 import com.epam.learn.microservices.fundamentals.song.service.service.dto.SongDTO
@@ -29,21 +29,25 @@ class SongController(private val service: SongService) {
         return ResponseEntity.created(location).body(response)
     }
 
-    @GetMapping
-    fun getSongsMetadata(@RequestParam resources: List<Long>): List<SongDTO> {
-        return service.getSongsMetadataByResourceIds(resources)
-    }
-
     @GetMapping("/{id}")
     fun getSongMetadataById(@PathVariable id: Long): SongDTO {
         return service.getSongMetadata(id)
     }
 
     @DeleteMapping
-    fun deleteSongMetadata(@RequestParam @Size(max = 200) ids: List<Long>): ResponseEntity<*> {
-        val deleteResourcesIds = service.deleteSongMetadata(ids)
-        val response = IdListDTO(deleteResourcesIds)
+    fun deleteSongMetadata(
+        @RequestParam(required = false) @Size(max = 200) ids: List<Long>?,
+        @RequestParam(required = false) @Size(max = 200) resources: List<Long>?
+    ): IdListDTO<Long> {
+        val deleteSongsIds = ArrayList<Long>()
 
-        return ResponseEntity.ok(response)
+        if (ids != null) {
+            deleteSongsIds += service.deleteSongMetadata(ids)
+        }
+        if (resources != null) {
+            deleteSongsIds += service.deleteSongsMetadataByResourceIds(resources)
+        }
+
+        return IdListDTO(deleteSongsIds)
     }
 }
