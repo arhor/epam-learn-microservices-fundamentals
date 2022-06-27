@@ -59,10 +59,9 @@ spring:
 resilience4j:
   retry:
     instances:
-      resource-created:
+      resource-events:
         max-attempts: 5
         wait-duration: 5s
-
 
 configuration:
   aws:

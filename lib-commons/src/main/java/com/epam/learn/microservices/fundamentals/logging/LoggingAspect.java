@@ -7,53 +7,73 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Aspect
-class LoggingAspect {
+public class LoggingAspect {
 
-    @Around(value = "executionLogging(log)", argNames = "joinPoint,log")
-    public Object logMethodExecution(final ProceedingJoinPoint joinPoint, final LogExecution log) throws Throwable {
+    @Around(value = "executionLogging()")
+    public Object logMethodExecution(final ProceedingJoinPoint joinPoint) throws Throwable {
+        var annotation = findAnnotation(joinPoint);
 
-        var logger = componentLogger(joinPoint);
+        if (annotation != null) {
+            var logger = componentLogger(joinPoint);
+            var level = annotation.level();
 
-        if (isLevelEnabled(logger, log.level())) {
-            var signature = joinPoint.getSignature();
-            var signatureName = "%s.%s()".formatted(
-                signature.getDeclaringType().getSimpleName(),
-                signature.getName()
-            );
+            if (isLevelEnabled(logger, level)) {
+                var signature = joinPoint.getSignature();
+                var signatureName = "%s.%s()".formatted(
+                    signature.getDeclaringType().getSimpleName(),
+                    signature.getName()
+                );
 
-            log(logger, log.level(), "Method: {}, Args: {}", signatureName, joinPoint.getArgs());
-            var result = joinPoint.proceed();
-            log(logger, log.level(), "Method: {}, Result: {}", signatureName, result);
+                log(logger, level, "Method: {}, Args: {}", signatureName, joinPoint.getArgs());
+                var result = joinPoint.proceed();
+                log(logger, level, "Method: {}, Result: {}", signatureName, result);
 
-            return result;
-        } else {
-            return joinPoint.proceed();
+                return result;
+            }
         }
+        return joinPoint.proceed();
     }
 
-    @AfterThrowing(pointcut = "executionLogging(log)", throwing = "exception", argNames = "joinPoint,exception,log")
-    public void logException(final JoinPoint joinPoint, final Throwable exception, LogExecution log) {
+    @AfterThrowing(pointcut = "executionLogging()", throwing = "exception")
+    public void logException(final JoinPoint joinPoint, final Throwable exception) {
         componentLogger(joinPoint).error("An error occurred", exception);
     }
 
-    @Pointcut(value = "within(@log *)", argNames = "log")
-    private void annotatedClass(LogExecution log) { /* no-op */ }
+    @Pointcut("within(@com.epam.learn.microservices.fundamentals.logging.LogExecution *)")
+    private void annotatedClass() { /* no-op */ }
 
-    @Pointcut(value = "@annotation(log)", argNames = "log")
-    private void annotatedMethod(LogExecution log) { /* no-op */ }
+    @Pointcut("@annotation(com.epam.learn.microservices.fundamentals.logging.LogExecution)")
+    private void annotatedMethod() { /* no-op */ }
 
-    @Pointcut(value = "execution(public * *(..))")
+    @Pointcut("execution(public * *(..))")
     private void publicMethod() { /* no-op */ }
 
-    @Pointcut(value = "(annotatedClass(log) || annotatedMethod(log)) && publicMethod()", argNames = "log")
-    private void executionLogging(LogExecution log) { /* no-op */ }
+    @Pointcut("(annotatedClass() || annotatedMethod()) && publicMethod()")
+    private void executionLogging() { /* no-op */ }
 
     private Logger componentLogger(final JoinPoint joinPoint) {
         return LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
+    }
+
+    private LogExecution findAnnotation(final JoinPoint joinPoint) {
+        if (joinPoint.getSignature() instanceof MethodSignature signature) {
+            var annotationClass = LogExecution.class;
+            var method = signature.getMethod();
+            var annotation = method.getAnnotation(annotationClass);
+
+            if (annotation == null) {
+                var declaringClass = method.getDeclaringClass();
+
+                annotation = declaringClass.getAnnotation(annotationClass);
+            }
+            return annotation;
+        }
+        return null;
     }
 
     private boolean isLevelEnabled(final Logger logger, final Level level) {
