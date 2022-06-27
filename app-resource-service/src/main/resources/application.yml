@@ -56,6 +56,14 @@ spring:
       max-file-size: 10MB
       max-request-size: 15MB
 
+resilience4j:
+  retry:
+    instances:
+      resource-created:
+        max-attempts: 5
+        wait-duration: 5s
+
+
 configuration:
   aws:
     url: ${AWS_URL}
