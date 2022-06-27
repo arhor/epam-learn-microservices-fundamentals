@@ -8,6 +8,7 @@ import com.epam.learn.microservices.fundamentals.resource.processor.service.Reso
 import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceEvent.Type.DELETED
 import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceMetadataProcessor
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Component
 
@@ -21,7 +22,7 @@ class ResourceCreatedEventListener(
 
     @JmsListener(destination = "\${configuration.aws.sqs.queue}")
     fun processResourceEvent(data: ByteArray) {
-        val event = objectMapper.readValue(data, ResourceEvent::class.java)
+        val event = objectMapper.readValue<ResourceEvent>(data)
 
         when (event.type) {
             CREATED -> {
