@@ -30,7 +30,7 @@ class ResourceCreatedEventListener(
                 val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
                 val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
 
-                songsClient.persistMetadata(metadata)
+                songsClient.createSongMetadata(metadata)
             }
             DELETED -> {
                 val deletedResourceIds = (event.payload as List<*>).map { it.unwrapResourceId() }

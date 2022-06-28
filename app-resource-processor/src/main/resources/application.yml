@@ -34,6 +34,21 @@ spring:
     ansi:
       enabled: detect
 
+resilience4j:
+  retry:
+    instances:
+      fetch-resource-binary-data:
+        max-attempts: 3
+        wait-duration: 10s
+        ignore-exceptions:
+          - java.lang.NullPointerException
+      create-song-metadata:
+        max-attempts: 5
+        wait-duration: 2s
+      delete-songs-metadata:
+        max-attempts: 3
+        wait-duration: 5s
+
 configuration:
   aws:
     url: ${AWS_URL}
