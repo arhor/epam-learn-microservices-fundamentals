@@ -59,9 +59,9 @@ spring:
 resilience4j:
   retry:
     instances:
-      resource-events:
-        max-attempts: 5
-        wait-duration: 5s
+      resource-event-publisher:
+        max-attempts: ${configuration.retry.default-max-attempts}
+        wait-duration: ${configuration.retry.default-wait-duration}
 
 configuration:
   aws:
@@ -73,3 +73,6 @@ configuration:
       bucket: ${AWS_S3_BUCKET_NAME}
     sqs:
       queue: ${AWS_SQS_QUEUE_NAME}
+  retry:
+    default-max-attempts: 5
+    default-wait-duration: 5s

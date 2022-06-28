@@ -40,7 +40,11 @@ class ResourceCreatedEventListener(
         }
     }
 
-    private fun Any?.unwrapResourceId() = (this as Number).toLong()
+    private fun Any?.unwrapResourceId(): Long = when (this) {
+        is Number -> this.toLong()
+        is String -> this.toLong()
+        else -> throw IllegalArgumentException("Resource ID should be represented as Number or String")
+    }
 
     companion object {
         private val objectMapper = jacksonObjectMapper()

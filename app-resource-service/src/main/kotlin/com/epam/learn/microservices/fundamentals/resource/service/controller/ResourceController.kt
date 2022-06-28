@@ -5,7 +5,6 @@ import com.epam.learn.microservices.fundamentals.dto.IdListDTO
 import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
-import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceUpdateDTO
 import com.epam.learn.microservices.fundamentals.resource.service.validation.HasMediaType
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
@@ -50,16 +49,6 @@ class ResourceController(private val service: ResourceService) {
         return ResponseEntity.ok()
             .header(CONTENT_DISPOSITION, "attachment; filename=\"${resource.filename}\"")
             .body(stream)
-    }
-
-    @GetMapping("/unprocessed")
-    fun getUnprocessedResourceAudioBinaryData(): IdListDTO<Long> {
-        return service.getUnprocessedResourceIds().let(::IdListDTO)
-    }
-
-    @PatchMapping("/{id}")
-    fun updateResource(@PathVariable id: Long, @RequestBody dto: ResourceUpdateDTO) {
-        service.updateResource(id, dto)
     }
 
     @DeleteMapping

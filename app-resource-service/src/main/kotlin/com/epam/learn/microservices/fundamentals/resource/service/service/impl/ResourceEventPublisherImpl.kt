@@ -8,9 +8,9 @@ import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 
 @Component
+@Retry(name = "resource-event-publisher")
 class ResourceEventPublisherImpl(private val jmsTemplate: JmsTemplate) : ResourceEventPublisher {
 
-    @Retry(name = "resource-events")
     override fun publishEvent(event: ResourceEvent<*>) {
         jmsTemplate.convertAndSend(
             objectMapper.writeValueAsBytes(

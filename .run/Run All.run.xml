@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run All" type="CompoundRunConfigurationType">
-    <toRun name="Resource-Processor" type="GradleRunConfiguration" />
-    <toRun name="Resource-Service" type="GradleRunConfiguration" />
-    <toRun name="Song-Service" type="GradleRunConfiguration" />
+    <toRun name="ResourceProcessorRunner" type="SpringBootApplicationConfigurationType" />
+    <toRun name="ResourceServiceRunner" type="SpringBootApplicationConfigurationType" />
+    <toRun name="SongServiceRunner" type="SpringBootApplicationConfigurationType" />
     <method v="2" />
   </configuration>
 </component>

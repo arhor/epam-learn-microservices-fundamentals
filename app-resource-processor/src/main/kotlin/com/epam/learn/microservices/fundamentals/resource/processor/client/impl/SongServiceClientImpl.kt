@@ -4,24 +4,31 @@ import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.processor.client.SongServiceClient
 import com.epam.learn.microservices.fundamentals.resource.processor.model.ResourceMetadata
 import io.github.resilience4j.retry.annotation.Retry
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import java.lang.invoke.MethodHandles
 
 @Service
 @LogExecution
-class SongServiceClientImpl(private val restTemplate: RestTemplate) : SongServiceClient {
+@Retry(name = "song-service-client")
+class SongServiceClientImpl(private val http: RestTemplate) : SongServiceClient {
 
     @Value("\${configuration.song-service-url}")
     lateinit var songServiceUrl: String
 
-    @Retry(name = "create-song-metadata")
+
     override fun createSongMetadata(metadata: ResourceMetadata) {
-        restTemplate.postForObject(songServiceUrl, metadata, String::class.java)
+        val location = http.postForLocation(songServiceUrl, metadata)
+        log.info("Created song metadata, location: {}", location)
     }
 
-    @Retry(name = "delete-songs-metadata")
     override fun deleteSongsMetadata(resourceIds: List<Long>) {
-        restTemplate.delete("${songServiceUrl}?resources={ids}", resourceIds.joinToString())
+        http.delete("${songServiceUrl}?resources={ids}", resourceIds)
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     }
 }

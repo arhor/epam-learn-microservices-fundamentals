@@ -5,29 +5,20 @@ import com.epam.learn.microservices.fundamentals.resource.processor.client.Resou
 import io.github.resilience4j.retry.annotation.Retry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
-import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.io.InputStream
 
 @Service
 @LogExecution
-class ResourceServiceClientImpl(
-    private val restTemplate: RestTemplate,
+@Retry(name = "resource-service-client")
+class ResourceServiceClientImpl(private val http: RestTemplate) : ResourceServiceClient {
+
     @Value("\${configuration.resource-service-url}")
-    private val baseURL: String
-) : ResourceServiceClient {
+    private lateinit var baseURL: String
 
-    @Retry(name = "fetch-resource-binary-data")
     override fun fetchResourceBinaryData(id: Long): InputStream {
-        val response =
-            restTemplate.exchange(
-                "$baseURL/$id",
-                HttpMethod.GET,
-                null,
-                Resource::class.java
-            )
-
-        return response.body!!.inputStream
+        return http.getForObject("$baseURL/{id}", Resource::class.java, id)?.inputStream
+            ?: throw IllegalStateException("Response body cannot be null")
     }
 }

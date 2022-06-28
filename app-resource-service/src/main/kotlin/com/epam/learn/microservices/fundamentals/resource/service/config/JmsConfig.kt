@@ -18,9 +18,11 @@ import javax.jms.ConnectionFactory
 import javax.jms.ExceptionListener
 
 /**
+ * JmsAutoConfiguration is not imported via [org.springframework.context.annotation.Import]
+ * since it causes autoconfiguration to not be applied at all.
+ *
  * @see org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
  */
-@Import(JmsAutoConfiguration::class)
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(JmsProperties::class)
 class JmsConfig {
