@@ -34,7 +34,6 @@ class JmsConfig {
     fun jacksonJmsMessageConverter(): MessageConverter {
         return MappingJackson2MessageConverter().apply {
             setTargetType(MessageType.TEXT)
-            setTypeIdPropertyName("_type")
         }
     }
 

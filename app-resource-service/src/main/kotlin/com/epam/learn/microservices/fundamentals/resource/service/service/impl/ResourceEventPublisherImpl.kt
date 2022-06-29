@@ -2,8 +2,8 @@ package com.epam.learn.microservices.fundamentals.resource.service.service.impl
 
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEvent
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEventPublisher
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.resilience4j.retry.annotation.Retry
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 
@@ -11,15 +11,19 @@ import org.springframework.stereotype.Component
 @Retry(name = "resource-event-publisher")
 class ResourceEventPublisherImpl(private val jmsTemplate: JmsTemplate) : ResourceEventPublisher {
 
-    override fun publishEvent(event: ResourceEvent<*>) {
-        jmsTemplate.convertAndSend(
-            objectMapper.writeValueAsBytes(
-                event
-            )
-        )
-    }
+    @Value("\${configuration.aws.sqs.created-resources-queue}")
+    lateinit var createdResourcesQueue: String
 
-    companion object {
-        private val objectMapper = jacksonObjectMapper()
+    @Value("\${configuration.aws.sqs.deleted-resources-queue}")
+    lateinit var deletedResourcesQueue: String
+
+    override fun publishEvent(event: ResourceEvent) {
+        jmsTemplate.convertAndSend(
+            when (event) {
+                is ResourceEvent.Created -> createdResourcesQueue
+                is ResourceEvent.Deleted -> deletedResourcesQueue
+            },
+            event
+        )
     }
 }

@@ -53,7 +53,8 @@ configuration:
     access-key: ${AWS_ACCESS_KEY}
     secret-key: ${AWS_SECRET_KEY}
     sqs:
-      queue: ${AWS_SQS_QUEUE_NAME}
+      created-resources-queue: ${AWS_SQS_QUEUE_CREATED_RESOURCES}
+      deleted-resources-queue: ${AWS_SQS_QUEUE_DELETED_RESOURCES}
   resource-service-url: ${RESOURCE_SERVICE_URL}
   song-service-url: ${SONG_SERVICE_URL}
   retry:

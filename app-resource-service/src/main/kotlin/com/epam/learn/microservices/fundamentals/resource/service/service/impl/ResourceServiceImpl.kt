@@ -77,7 +77,7 @@ class ResourceServiceImpl(
 
                 resourceEventPublisher.publishEvent(
                     ResourceEvent.Deleted(
-                        payload = deletedResourceIds
+                        ids = deletedResourceIds
                     )
                 )
             }
@@ -103,7 +103,7 @@ class ResourceServiceImpl(
 
         resourceEventPublisher.publishEvent(
             ResourceEvent.Created(
-                payload = resourceId
+                id = resourceId
             )
         )
 

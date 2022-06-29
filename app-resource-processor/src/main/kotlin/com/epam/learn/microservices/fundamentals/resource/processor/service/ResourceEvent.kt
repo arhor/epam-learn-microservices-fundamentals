@@ -1,6 +1,8 @@
 package com.epam.learn.microservices.fundamentals.resource.processor.service
 
-data class ResourceEvent(val type: Type, val payload: Any) {
+sealed interface ResourceEvent {
 
-    enum class Type { CREATED, DELETED }
+    data class Created(val id: Long) : ResourceEvent
+
+    data class Deleted(val ids: List<Long>) : ResourceEvent
 }
