@@ -1,6 +1,7 @@
 package com.epam.learn.microservices.fundamentals.song.service.service.impl
 
 import com.epam.learn.microservices.fundamentals.logging.LogExecution
+import com.epam.learn.microservices.fundamentals.song.service.data.model.Song
 import com.epam.learn.microservices.fundamentals.song.service.data.repository.SongRepository
 import com.epam.learn.microservices.fundamentals.song.service.service.SongService
 import com.epam.learn.microservices.fundamentals.song.service.service.dto.SongDTO
@@ -34,14 +35,22 @@ class SongServiceImpl(
             ?: throw EntityNotFoundException("id = $id")
     }
 
-    override fun getSongsMetadataByResourceIds(resources: List<Long>): List<SongDTO> {
-        return songRepository.findAllByResourceIdIn(resources).map(songMapper::mapEntityToDto)
+    @Transactional
+    override fun deleteSongMetadata(ids: List<Long>): List<Long> {
+        return deleteInternal { songRepository.findAllById(ids) }
     }
 
     @Transactional
-    override fun deleteSongMetadata(ids: List<Long>): List<Long> {
-        val existingSongIds = songRepository.findAllById(ids).mapNotNull { it.id }
-        songRepository.deleteAllById(existingSongIds)
+    override fun deleteSongsMetadataByResourceIds(resources: List<Long>): List<Long> {
+        return deleteInternal { songRepository.findAllByResourceIdIn(resources) }
+    }
+
+    private inline fun deleteInternal(source: () -> Iterable<Song>): List<Long> {
+        val existingSongIds = source.invoke().mapNotNull { it.id }
+
+        if (existingSongIds.isNotEmpty()) {
+            songRepository.deleteAllById(existingSongIds)
+        }
         return existingSongIds
     }
 }

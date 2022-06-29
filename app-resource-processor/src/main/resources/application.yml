@@ -18,6 +18,13 @@ spring:
     active: ${SPRING_ACTIVE_PROFILES:dev}
   jmx:
     enabled: false
+  jms:
+    template:
+      default-destination: ${configuration.aws.sqs.queue}
+    listener:
+      acknowledge-mode: CLIENT
+      concurrency: 3
+      max-concurrency: 10
   mvc:
     throw-exception-if-no-handler-found: true
   autoconfigure:
@@ -27,6 +34,29 @@ spring:
     ansi:
       enabled: detect
 
+resilience4j:
+  retry:
+    instances:
+      resource-service-client:
+        max-attempts: ${configuration.retry.default-max-attempts}
+        wait-duration: ${configuration.retry.default-wait-duration}
+        ignore-exceptions:
+          - java.lang.NullPointerException
+      song-service-client:
+        max-attempts: ${configuration.retry.default-max-attempts}
+        wait-duration: ${configuration.retry.default-wait-duration}
+
 configuration:
+  aws:
+    url: ${AWS_URL}
+    region: ${AWS_DEFAULT_REGION}
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+    sqs:
+      created-resources-queue: ${AWS_SQS_QUEUE_CREATED_RESOURCES}
+      deleted-resources-queue: ${AWS_SQS_QUEUE_DELETED_RESOURCES}
   resource-service-url: ${RESOURCE_SERVICE_URL}
   song-service-url: ${SONG_SERVICE_URL}
+  retry:
+    default-max-attempts: 5
+    default-wait-duration: 5s

@@ -4,6 +4,7 @@ import com.epam.learn.microservices.fundamentals.resource.processor.model.Resour
 
 interface SongServiceClient {
 
-    fun persistMetadata(metadata: ResourceMetadata)
-    fun songMetadataExists(resourceId: Long): Boolean
+    fun createSongMetadata(metadata: ResourceMetadata)
+
+    fun deleteSongsMetadata(resourceIds: List<Long>)
 }
