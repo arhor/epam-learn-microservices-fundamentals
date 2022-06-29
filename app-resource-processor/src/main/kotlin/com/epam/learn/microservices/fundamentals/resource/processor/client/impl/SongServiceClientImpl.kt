@@ -25,7 +25,8 @@ class SongServiceClientImpl(private val http: RestTemplate) : SongServiceClient 
     }
 
     override fun deleteSongsMetadata(resourceIds: List<Long>) {
-        http.delete("${songServiceUrl}?resources={ids}", resourceIds)
+        val ids = resourceIds.joinToString(separator = ",")
+        http.delete("${songServiceUrl}?resources={ids}", ids)
     }
 
     companion object {

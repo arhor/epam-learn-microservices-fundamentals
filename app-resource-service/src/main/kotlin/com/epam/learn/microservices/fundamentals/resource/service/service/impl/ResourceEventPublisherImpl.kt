@@ -1,6 +1,6 @@
 package com.epam.learn.microservices.fundamentals.resource.service.service.impl
 
-import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEvent
+import com.epam.learn.microservices.fundamentals.event.ResourceEvent
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEventPublisher
 import io.github.resilience4j.retry.annotation.Retry
 import org.springframework.beans.factory.annotation.Value

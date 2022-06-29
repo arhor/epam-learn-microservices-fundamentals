@@ -1,10 +1,10 @@
 package com.epam.learn.microservices.fundamentals.resource.service.service.impl
 
+import com.epam.learn.microservices.fundamentals.event.ResourceEvent
 import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceRepository
-import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEvent
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEventPublisher
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO

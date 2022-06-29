@@ -1,4 +1,4 @@
-package com.epam.learn.microservices.fundamentals.resource.processor.service
+package com.epam.learn.microservices.fundamentals.event
 
 sealed interface ResourceEvent {
 

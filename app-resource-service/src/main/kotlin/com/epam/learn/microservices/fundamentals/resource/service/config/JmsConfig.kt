@@ -1,5 +1,6 @@
 package com.epam.learn.microservices.fundamentals.resource.service.config
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
 import org.springframework.boot.autoconfigure.jms.JmsProperties
@@ -36,6 +37,8 @@ class JmsConfig {
     fun jacksonJmsMessageConverter(): MessageConverter {
         return MappingJackson2MessageConverter().apply {
             setTargetType(MessageType.TEXT)
+            setTypeIdPropertyName("_type")
+            setObjectMapper(jacksonObjectMapper())
         }
     }
 
