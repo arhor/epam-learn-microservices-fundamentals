@@ -5,11 +5,9 @@ services:
     image: localstack/localstack:latest
     container_name: localstack
     ports:
-      - '4566-4583:4566-4583'
+      - "4566-4583:4566-4583"
     env_file:
       - app-resource-service/.env.local
-    environment:
-      SERVICES: s3,sqs
     volumes:
       - ${TEMPDIR:-/tmp/localstack}:/tmp/localstack
       - /var/run/docker.sock:/var/run/docker.sock
