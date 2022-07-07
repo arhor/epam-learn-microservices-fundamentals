@@ -7,7 +7,7 @@ import com.epam.learn.microservices.fundamentals.song.service.service.exception.
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.*
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -41,8 +41,7 @@ internal class SongControllerTest {
             resourceId = 1L,
         )
 
-        given(service.getSongMetadata(anyLong()))
-            .willReturn(song)
+        given { service.getSongMetadata(any()) } willReturn { song }
 
         // when
         http.perform(get("/api/songs/{songId}", songId))
@@ -66,8 +65,7 @@ internal class SongControllerTest {
         val songId = 1L
         val errorCondition = "id=$songId"
 
-        given(service.getSongMetadata(anyLong()))
-            .willThrow(EntityNotFoundException(errorCondition))
+        given { service.getSongMetadata(any()) } willThrow { EntityNotFoundException(errorCondition) }
 
         // when
         http.perform(get("/api/songs/{songId}", songId))

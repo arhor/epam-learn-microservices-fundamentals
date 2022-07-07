@@ -1,10 +1,12 @@
 package com.epam.learn.microservices.fundamentals.resource.service.controller.error
 
+import com.amazonaws.services.s3.model.AmazonS3Exception
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityDuplicateException
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -37,6 +39,20 @@ class GlobalExceptionHandler(private val messages: MessageSource) {
     fun handleEntityNotFoundException(exception: EntityNotFoundException, locale: Locale): ErrorResponse {
         log.error("Resource with specified condition is not found", exception)
         return createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND, locale, exception.condition)
+    }
+
+    @ExceptionHandler(AmazonS3Exception::class)
+    fun handleAmazonS3Exception(exception: AmazonS3Exception, locale: Locale): ResponseEntity<ErrorResponse> {
+        log.error("Amazon S3 exception occurred", exception)
+        return ResponseEntity
+            .status(exception.statusCode)
+            .body(
+                ErrorResponse(
+                    message = "Amazon S3 exception occurred",
+                    details = listOf(exception.errorMessage),
+                    timestamp = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS)
+                )
+            )
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

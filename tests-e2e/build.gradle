@@ -1,0 +1,35 @@
+import com.github.gradle.node.npm.task.NpmTask
+
+plugins {
+    id "com.github.node-gradle.node"
+    id "idea"
+}
+
+node {
+    version = property("app.version.node")
+    download = true
+
+    workDir = file("${rootDir}/.gradle/nodejs")
+    npmWorkDir = file("${rootDir}/.gradle/npm")
+    yarnWorkDir = file("${rootDir}/.gradle/yarn")
+}
+
+idea {
+    module {
+        excludeDirs += files(
+            "$projectDir/node_modules",
+            "$projectDir/dist",
+        )
+    }
+}
+
+task cypressOpen(type: NpmTask, dependsOn: npmInstall) {
+    workingDir.fileValue(projectDir)
+    args = ["run", "cypress:open"]
+}
+
+
+task cypressTest(type: NpmTask, dependsOn: npmInstall) {
+    workingDir.fileValue(projectDir)
+    args = ["run", "cypress:test"]
+}

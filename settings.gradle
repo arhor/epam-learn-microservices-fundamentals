@@ -6,6 +6,7 @@ pluginManagement {
         id "org.jetbrains.kotlin.kapt"           version settings["app.version.kotlin"]
         id "org.jetbrains.kotlin.jvm"            version settings["app.version.kotlin"]
         id "org.jetbrains.kotlin.plugin.spring"  version settings["app.version.kotlin"]
+        id "com.github.node-gradle.node"         version settings["app.version.nodeGradlePlugin"]
     }
 }
 // @formatter:on
@@ -16,3 +17,4 @@ include ":app-resource-processor"
 include ":app-resource-service"
 include ":app-song-service"
 include ":lib-commons"
+include ":tests-e2e"

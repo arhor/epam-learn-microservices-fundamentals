@@ -1,15 +1,18 @@
 package com.epam.learn.microservices.fundamentals.resource.service.service.impl
 
+import com.amazonaws.services.s3.model.AmazonS3Exception
 import com.epam.learn.microservices.fundamentals.event.ResourceEvent
 import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.service.data.model.Resource
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceDataRepository
 import com.epam.learn.microservices.fundamentals.resource.service.data.repository.ResourceRepository
+import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceBinaryDataNotFoundEvent
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceEventPublisher
 import com.epam.learn.microservices.fundamentals.resource.service.service.ResourceService
 import com.epam.learn.microservices.fundamentals.resource.service.service.dto.ResourceDTO
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityDuplicateException
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityNotFoundException
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,6 +24,7 @@ class ResourceServiceImpl(
     private val repository: ResourceRepository,
     private val dataRepository: ResourceDataRepository,
     private val resourceEventPublisher: ResourceEventPublisher,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : ResourceService {
 
     @Transactional
@@ -48,7 +52,12 @@ class ResourceServiceImpl(
         val filename = meta.filename
             ?: throw IllegalStateException("filename cannot be null")
 
-        val (data, size) = dataRepository.download(filename)
+        val (data, size) = try {
+            dataRepository.download(filename)
+        } catch (e: AmazonS3Exception) {
+            applicationEventPublisher.publishEvent(ResourceBinaryDataNotFoundEvent(id))
+            throw e
+        }
 
         return ResourceDTO(
             filename = filename,
