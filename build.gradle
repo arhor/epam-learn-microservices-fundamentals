@@ -59,23 +59,29 @@ subprojects {
         }
     }
 
+    tasks.register("contractTest", Test) {
+        group = "verification"
+        useJUnitPlatform {
+            includeTags "contract"
+        }
+        shouldRunAfter test
+    }
+
     tasks.register("integrationTest", Test) {
         group = "verification"
-
         useJUnitPlatform {
             includeTags "integration"
         }
-
-        shouldRunAfter test
+        shouldRunAfter contractTest
     }
 
     tasks.test {
         useJUnitPlatform {
-            excludeTags "integration"
+            excludeTags "contract", "integration"
         }
     }
 
     tasks.check {
-        dependsOn test, integrationTest
+        dependsOn test, contractTest, integrationTest
     }
 }

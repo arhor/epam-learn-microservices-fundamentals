@@ -5,6 +5,7 @@ import com.epam.learn.microservices.fundamentals.song.service.service.SongServic
 import com.epam.learn.microservices.fundamentals.song.service.service.dto.SongDTO
 import com.epam.learn.microservices.fundamentals.song.service.service.exception.EntityNotFoundException
 import org.hamcrest.Matchers.*
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
+@Tag("contract")
 @Import(LocalizationConfig::class)
 @WebMvcTest(SongController::class)
 internal class SongControllerTest {
