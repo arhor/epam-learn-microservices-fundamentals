@@ -5,6 +5,7 @@
     "name": "Maksim Buryshynets",
     "email": "arhor18@gmail.com"
   },
+  "type": "module",
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:test": "cypress run"
