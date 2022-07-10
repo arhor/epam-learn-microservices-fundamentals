@@ -21,7 +21,7 @@ import javax.validation.constraints.Size
 @RequestMapping("/resources")
 class ResourceController(private val service: ResourceService) {
 
-    @PostMapping(consumes = ["multipart/form-data"])
+    @PostMapping(consumes = ["multipart/form-data"], produces = ["application/json"])
     fun uploadNewResource(@RequestParam @HasMediaType("audio/mpeg") file: MultipartFile): ResponseEntity<*> {
         val id = service.saveResource(
             ResourceDTO(
@@ -51,7 +51,7 @@ class ResourceController(private val service: ResourceService) {
             .body(stream)
     }
 
-    @DeleteMapping
+    @DeleteMapping(consumes = ["application/json"], produces = ["application/json"])
     fun deleteResources(@RequestParam @Size(max = 200) ids: List<Long>): ResponseEntity<*> {
         val deleteResourcesIds = service.deleteResources(ids)
         val dto = IdListDTO(deleteResourcesIds)

@@ -4,6 +4,8 @@ export default defineConfig({
     video: false,
     screenshotOnRunFailure: false,
     env: {
+        resourceServiceUrl: 'http://localhost:5001/api',
+        songServiceUrl: 'http://localhost:5002/api',
     },
     e2e: {
         setupNodeEvents(on, config) {
