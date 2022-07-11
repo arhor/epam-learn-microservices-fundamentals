@@ -7,6 +7,7 @@ pluginManagement {
         id "org.jetbrains.kotlin.jvm"            version settings["app.version.kotlin"]
         id "org.jetbrains.kotlin.plugin.spring"  version settings["app.version.kotlin"]
         id "com.github.node-gradle.node"         version settings["app.version.nodeGradlePlugin"]
+        id "com.bmuschko.docker-remote-api"      version settings["app.version.dockerGradlePlugin"]
     }
 }
 // @formatter:on

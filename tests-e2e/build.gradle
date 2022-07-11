@@ -1,6 +1,5 @@
-import com.github.gradle.node.npm.task.NpmTask
-
 plugins {
+    id "com.bmuschko.docker-remote-api"
     id "com.github.node-gradle.node"
     id "idea"
 }
@@ -22,13 +21,18 @@ idea {
     }
 }
 
-task cypressOpen(type: NpmTask, dependsOn: npmInstall) {
+task cypressOpen(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: npmInstall) {
     workingDir.fileValue(projectDir)
     args = ["run", "cypress:open"]
 }
 
 
-task cypressTest(type: NpmTask, dependsOn: npmInstall) {
+task cypressTest(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: npmInstall) {
     workingDir.fileValue(projectDir)
     args = ["run", "cypress:test"]
 }
+
+// 1. create test db/localstack instances
+// 2. build services and deploy as docker images
+// 3. run e2e tests
+// 4. should down docker
