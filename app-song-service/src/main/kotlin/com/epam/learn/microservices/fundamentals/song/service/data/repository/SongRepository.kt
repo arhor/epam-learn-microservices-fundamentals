@@ -7,5 +7,7 @@ interface SongRepository : CrudRepository<Song, Long> {
 
     fun existsByResourceId(resourceId: Long): Boolean
 
+    fun findByResourceId(resourceId: Long): Song?
+
     fun findAllByResourceIdIn(resourceIds: List<Long>): List<Song>
 }

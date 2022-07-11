@@ -29,6 +29,11 @@ class SongController(private val service: SongService) {
         return ResponseEntity.created(location).body(response)
     }
 
+    @GetMapping(params = ["resourceId"])
+    fun getSongMetadataByResourceId(@RequestParam resourceId: Long): SongDTO {
+        return service.getSongMetadataByResourceId(resourceId)
+    }
+
     @GetMapping("/{id}")
     fun getSongMetadataById(@PathVariable id: Long): SongDTO {
         return service.getSongMetadata(id)
