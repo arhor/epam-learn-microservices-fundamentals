@@ -4,12 +4,12 @@ const SONGS_API_URL = `${Cypress.env('songServiceUrl')}/songs`;
 describe('Resources API', () => {
     it('should create new resource', () => {
         cy.fixture('sample.mp3', 'binary').then((file) => {
-            // given
+            // given ---------------------------------------------------------------------------------------------------
             const blob = Cypress.Blob.binaryStringToBlob(file, 'audio/mpeg');
             const data = new FormData();
             data.append('file', blob, 'sample.mp3');
 
-            // when
+            // when ----------------------------------------------------------------------------------------------------
             cy.request({
                 method: 'POST',
                 url: RESOURCES_API_URL,
@@ -28,7 +28,7 @@ describe('Resources API', () => {
                 }
             });
 
-            // then
+            // then ----------------------------------------------------------------------------------------------------
             cy.get('@createResourceRequest').should((response) => {
                 expect(response.status).to.be.equal(201);
                 expect(response.headers).to.have.property('location').that.have.string(RESOURCES_API_URL);
