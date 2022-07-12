@@ -1,5 +1,5 @@
 plugins {
-    id "com.bmuschko.docker-remote-api"
+    id "com.avast.gradle.docker-compose"
     id "com.github.node-gradle.node"
     id "idea"
 }
@@ -32,7 +32,7 @@ task cypressTest(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: npmIn
     args = ["run", "cypress:test"]
 }
 
-// 1. create test db/localstack instances
-// 2. build services and deploy as docker images
-// 3. run e2e tests
-// 4. should down docker
+dockerCompose {
+    useComposeFiles = ['docker-compose.test.yml']
+    isRequiredBy cypressTest
+}
