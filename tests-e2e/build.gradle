@@ -27,7 +27,12 @@ task cypressOpen(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: npmIn
 }
 
 
-task cypressTest(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: npmInstall) {
+task cypressTest(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: [
+    npmInstall,
+    ":app-resource-processor:bootJar",
+    ":app-resource-service:bootJar",
+    ":app-song-service:bootJar",
+]) {
     workingDir.fileValue(projectDir)
     args = ["run", "cypress:test"]
 }
