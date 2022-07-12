@@ -1,0 +1,14 @@
+plugins {
+    id "groovy-gradle-plugin"
+}
+
+repositories {
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:${property("app.version.kotlin")}"
+    implementation "org.jetbrains.kotlin:kotlin-allopen:${property("app.version.kotlin")}"
+    implementation "org.springframework.boot:spring-boot-gradle-plugin:${property("app.version.springBoot")}"
+    implementation "io.spring.gradle:dependency-management-plugin:${property"app.version.springDependencyManagement"}"
+}

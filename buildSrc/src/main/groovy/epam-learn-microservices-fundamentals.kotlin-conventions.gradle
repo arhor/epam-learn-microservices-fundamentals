@@ -1,0 +1,38 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+java {
+    sourceCompatibility = property("app.version.java")
+    targetCompatibility = property("app.version.java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = [
+        "-Xlint:unchecked",
+        "-Xlint:deprecation",
+    ]
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions {
+        freeCompilerArgs = [
+            "-Xjsr305=strict",
+            "-Xjvm-default=all",
+            "-Xcontext-receivers",
+            "-opt-in=kotlin.RequiresOptIn"
+        ]
+        jvmTarget = project.property("app.version.java")
+        javaParameters = true
+    }
+}
