@@ -1,4 +1,4 @@
-package com.epam.learn.microservices.fundamentals.song.service.controller.error
+package com.epam.learn.microservices.fundamentals.error
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
@@ -16,7 +16,7 @@ class ErrorCodeSerializer : StdSerializer<ErrorCode>(ErrorCode::class.java) {
     }
 
     private fun convertCodeToPaddedString(value: ErrorCode): String {
-        val numberAsString = value.numericValue.toString()
+        val numberAsString = value.value.toString()
 
         if (numberAsString.length > NUM_CODE_MAX_LENGTH) {
             log.debug("ErrorCode {} numeric value is too large", value)

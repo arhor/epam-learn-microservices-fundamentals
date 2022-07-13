@@ -1,0 +1,43 @@
+plugins {
+    id "com.avast.gradle.docker-compose"
+    id "com.github.node-gradle.node"
+    id "idea"
+}
+
+node {
+    version = property("app.version.node")
+    download = true
+
+    workDir = file("${rootDir}/.gradle/nodejs")
+    npmWorkDir = file("${rootDir}/.gradle/npm")
+    yarnWorkDir = file("${rootDir}/.gradle/yarn")
+}
+
+idea {
+    module {
+        excludeDirs += files(
+            "$projectDir/node_modules",
+        )
+    }
+}
+
+task cypressOpen(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: npmInstall) {
+    workingDir.fileValue(projectDir)
+    args = ["run", "cypress:open"]
+}
+
+
+task cypressTest(type: com.github.gradle.node.npm.task.NpmTask, dependsOn: [
+    npmInstall,
+    ":app-resource-processor:bootJar",
+    ":app-resource-service:bootJar",
+    ":app-song-service:bootJar",
+]) {
+    workingDir.fileValue(projectDir)
+    args = ["run", "cypress:test"]
+}
+
+dockerCompose {
+    useComposeFiles = ['docker-compose.test.yml']
+    isRequiredBy cypressTest
+}

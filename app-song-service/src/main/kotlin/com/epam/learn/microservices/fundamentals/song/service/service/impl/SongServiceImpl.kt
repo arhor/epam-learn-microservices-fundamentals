@@ -35,6 +35,11 @@ class SongServiceImpl(
             ?: throw EntityNotFoundException("id = $id")
     }
 
+    override fun getSongMetadataByResourceId(resourceId: Long): SongDTO {
+        return songRepository.findByResourceId(resourceId)?.let(songMapper::mapEntityToDto)
+            ?: throw EntityNotFoundException("resourceId = $resourceId")
+    }
+
     @Transactional
     override fun deleteSongMetadata(ids: List<Long>): List<Long> {
         return deleteInternal { songRepository.findAllById(ids) }

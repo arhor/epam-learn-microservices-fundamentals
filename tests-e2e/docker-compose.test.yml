@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  localstack-test:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566-4583:4566-4583"
+    env_file:
+      - ../app-resource-service/.env.local
+    volumes:
+      - ${TEMPDIR:-/tmp/localstack}:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../scripts/localstack:/docker-entrypoint-initaws.d/
+
+  resource-processor:
+    container_name: resource-processor
+    build:
+      context: ../app-resource-processor
+    image: resource-processor:latest
+    ports:
+      - "5000:5000"
+
+  resource-service:
+    container_name: resource-service
+    build:
+      context: ../app-resource-service
+    image: resource-service:latest
+    ports:
+      - "5001:5001"
+
+  resource-service-test-db:
+    image: postgres:12
+    container_name: resource-service-test-db
+    ports:
+      - "5433:5432"
+    env_file:
+      - ../app-resource-service/.env.local
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  song-service:
+    container_name: song-service
+    build:
+      context: ../app-song-service
+    image: song-service:latest
+    ports:
+      - "5002:5002"
+
+  song-service-test-db:
+    image: postgres:12
+    container_name: song-service-test-db
+    ports:
+      - "5434:5432"
+    env_file:
+      - ../app-song-service/.env.local
+    tmpfs:
+      - /var/lib/postgresql/data

@@ -1,0 +1,16 @@
+{
+  "name": "tests-e2e",
+  "private": true,
+  "author": {
+    "name": "Maksim Buryshynets",
+    "email": "arhor18@gmail.com"
+  },
+  "type": "module",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:test": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^10.3.0"
+  }
+}

@@ -16,7 +16,7 @@ class ResourceEventListener(
     private val metadataProcessor: ResourceMetadataProcessor,
 ) {
 
-    @JmsListener(destination = "\${configuration.aws.sqs.created-resources-queue}")
+    @JmsListener(destination = "resource-created-events")
     fun processResourceCreatedEvent(event: ResourceEvent.Created) {
         val resourceId = event.id
         val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
@@ -25,7 +25,7 @@ class ResourceEventListener(
         songsClient.createSongMetadata(metadata)
     }
 
-    @JmsListener(destination = "\${configuration.aws.sqs.deleted-resources-queue}")
+    @JmsListener(destination = "resource-deleted-events")
     fun processResourceDeletedEvent(event: ResourceEvent.Deleted) {
         songsClient.deleteSongsMetadata(event.ids)
     }
