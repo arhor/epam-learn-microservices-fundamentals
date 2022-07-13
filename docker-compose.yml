@@ -4,37 +4,121 @@ services:
   localstack:
     image: localstack/localstack:latest
     container_name: localstack
+    expose:
+      - "4566-4583"
     ports:
       - "4566-4583:4566-4583"
-    env_file:
-      - app-resource-service/.env.local
+    networks:
+      - docker-network
     volumes:
       - ${TEMPDIR:-/tmp/localstack}:/tmp/localstack
       - /var/run/docker.sock:/var/run/docker.sock
       - ./scripts/localstack:/docker-entrypoint-initaws.d/
+    env_file:
+      - app-resource-service/.env.local
+    environment:
+      SERVICES: s3,sqs
+
+  resource-processor:
+    container_name: resource-processor
+    build:
+      context: app-resource-processor
+    image: resource-processor:latest
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+    links:
+      - "resource-service:resource-service"
+      - "song-service:song-service"
+      - "localstack:localstack"
+    networks:
+      - docker-network
+    depends_on:
+      - localstack
+    env_file:
+      - app-resource-processor/.env.local
+    environment:
+      PORT: 5000
+
+  resource-service:
+    container_name: resource-service
+    build:
+      context: app-resource-service
+    image: resource-service:latest
+    expose:
+      - "5001"
+    ports:
+      - "5001:5001"
+    links:
+      - "resource-service-db:resource-service-db"
+      - "localstack:localstack"
+    networks:
+      - docker-network
+    depends_on:
+      - localstack
+      - resource-service-db
+    env_file:
+      - app-resource-service/.env.local
+    environment:
+      PORT: 5001
 
   resource-service-db:
     image: postgres:12
     container_name: resource-service-db
+    expose:
+      - "5433"
     ports:
-      - "5433:5432"
+      - "5433:5433"
+    networks:
+      - docker-network
     volumes:
       - resource-service-db-data:/var/lib/postgresql/data
     env_file:
       - app-resource-service/.env.local
+    command: -p 5433
+
+  song-service:
+    container_name: song-service
+    build:
+      context: app-song-service
+    image: song-service:latest
+    expose:
+      - "5002"
+    ports:
+      - "5002:5002"
+    links:
+      - "song-service-db:song-service-db"
+    networks:
+      - docker-network
+    depends_on:
+      - song-service-db
+    env_file:
+      - app-song-service/.env.local
+    environment:
+      PORT: 5002
 
   song-service-db:
     image: postgres:12
     container_name: song-service-db
+    expose:
+      - "5434"
     ports:
-      - "5434:5432"
+      - "5434:5434"
+    networks:
+      - docker-network
     volumes:
       - song-service-db-data:/var/lib/postgresql/data
     env_file:
       - app-song-service/.env.local
+    command: -p 5434
 
 volumes:
   resource-service-db-data:
     driver: local
   song-service-db-data:
     driver: local
+
+networks:
+  docker-network:
+    driver: bridge
