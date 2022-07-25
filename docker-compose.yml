@@ -21,6 +21,7 @@ services:
 
   resource-processor:
     container_name: resource-processor
+    hostname: resource-processor
     build:
       context: app-resource-processor
     image: resource-processor:latest
@@ -28,10 +29,6 @@ services:
       - "5000"
     ports:
       - "5000:5000"
-    links:
-      - "resource-service:resource-service"
-      - "song-service:song-service"
-      - "localstack:localstack"
     networks:
       - docker-network
     depends_on:
@@ -43,6 +40,7 @@ services:
 
   resource-service:
     container_name: resource-service
+    hostname: resource-service
     build:
       context: app-resource-service
     image: resource-service:latest
@@ -50,9 +48,6 @@ services:
       - "5001"
     ports:
       - "5001:5001"
-    links:
-      - "resource-service-db:resource-service-db"
-      - "localstack:localstack"
     networks:
       - docker-network
     depends_on:
@@ -80,6 +75,7 @@ services:
 
   song-service:
     container_name: song-service
+    hostname: song-service
     build:
       context: app-song-service
     image: song-service:latest
@@ -87,8 +83,6 @@ services:
       - "5002"
     ports:
       - "5002:5002"
-    links:
-      - "song-service-db:song-service-db"
     networks:
       - docker-network
     depends_on:
@@ -121,4 +115,5 @@ volumes:
 
 networks:
   docker-network:
-    driver: bridge
+    external:
+      name: docker-network

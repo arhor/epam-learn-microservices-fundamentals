@@ -20,13 +20,13 @@ class SongServiceClientImpl(private val http: RestTemplate) : SongServiceClient 
 
 
     override fun createSongMetadata(metadata: ResourceMetadata) {
-        val location = http.postForLocation(songServiceUrl, metadata)
+        val location = http.postForLocation("${songServiceUrl}/songs", metadata)
         log.info("Created song metadata, location: {}", location)
     }
 
     override fun deleteSongsMetadata(resourceIds: List<Long>) {
         val ids = resourceIds.joinToString(separator = ",")
-        http.delete("${songServiceUrl}?resources={ids}", ids)
+        http.delete("${songServiceUrl}/songs?resources={ids}", ids)
     }
 
     companion object {
