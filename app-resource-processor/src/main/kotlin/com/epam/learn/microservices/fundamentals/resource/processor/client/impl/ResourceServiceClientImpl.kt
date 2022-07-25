@@ -18,7 +18,7 @@ class ResourceServiceClientImpl(private val http: RestTemplate) : ResourceServic
     private lateinit var baseURL: String
 
     override fun fetchResourceBinaryData(id: Long): InputStream {
-        return http.getForObject("$baseURL/{id}", Resource::class.java, id)?.inputStream
+        return http.getForObject("$baseURL/resources/{id}", Resource::class.java, id)?.inputStream
             ?: throw IllegalStateException("Response body cannot be null")
     }
 }

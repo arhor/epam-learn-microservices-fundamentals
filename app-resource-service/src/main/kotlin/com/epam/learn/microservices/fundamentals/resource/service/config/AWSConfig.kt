@@ -24,6 +24,7 @@ class AWSConfig(private val awsProps: AWSProps) {
             .standard()
             .withCredentials(credentials)
             .withEndpointConfiguration(endpointConfiguration)
+            .withPathStyleAccessEnabled(true)
             .build()
     }
 
