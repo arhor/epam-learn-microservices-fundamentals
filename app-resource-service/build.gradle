@@ -1,28 +1,16 @@
 plugins {
-    id "epam-learn-microservices-fundamentals.kotlin-conventions"
-    id "epam-learn-microservices-fundamentals.spring-conventions"
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.testcontainers:testcontainers-bom:${property('app.version.testcontainers')}"
-    }
+    id "epam-learn-microservices-fundamentals.spring-cloud-conventions"
+    id "epam-learn-microservices-fundamentals.spring-data-conventions"
+    id "epam-learn-microservices-fundamentals.spring-messaging-conventions"
+    id "epam-learn-microservices-fundamentals.spring-server-conventions"
 }
 
 dependencies {
     runtimeOnly "org.glassfish.jaxb:jaxb-runtime"
-    runtimeOnly "org.postgresql:postgresql"
 
     implementation project(":lib-commons")
-    implementation "com.amazonaws:amazon-sqs-java-messaging-lib:${property('app.version.awsJavaJms')}"
     implementation "com.amazonaws:aws-java-sdk-s3:${property('app.version.awsJavaSdk')}"
-    implementation "com.amazonaws:aws-java-sdk-sqs:${property('app.version.awsJavaSdk')}"
-    implementation "io.github.resilience4j:resilience4j-spring-boot2:${property('app.version.resilience4j')}"
-    implementation "org.flywaydb:flyway-core"
-    implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework:spring-jms"
-
-    testImplementation "org.testcontainers:junit-jupiter"
-    testImplementation "org.testcontainers:postgresql"
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
 }

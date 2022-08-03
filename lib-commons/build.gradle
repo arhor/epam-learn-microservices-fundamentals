@@ -1,13 +1,9 @@
 plugins {
-    id "epam-learn-microservices-fundamentals.kotlin-conventions"
-    id "epam-learn-microservices-fundamentals.spring-conventions"
+    id "epam-learn-microservices-fundamentals.spring-server-conventions"
     id "java-library"
 }
 
 dependencies {
-    kapt "org.springframework:spring-context-indexer"
-    kapt "org.springframework.boot:spring-boot-configuration-processor"
-
     implementation "org.springframework.boot:spring-boot-starter-aop"
 }
 

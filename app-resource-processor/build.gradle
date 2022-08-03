@@ -1,16 +1,16 @@
 plugins {
-    id "epam-learn-microservices-fundamentals.kotlin-conventions"
-    id "epam-learn-microservices-fundamentals.spring-conventions"
+    id "epam-learn-microservices-fundamentals.spring-cloud-conventions"
+    id "epam-learn-microservices-fundamentals.spring-messaging-conventions"
+    id "epam-learn-microservices-fundamentals.spring-server-conventions"
 }
 
 dependencies {
     implementation project(":lib-commons")
-    implementation "com.amazonaws:amazon-sqs-java-messaging-lib:${property('app.version.awsJavaJms')}"
-    implementation "com.amazonaws:aws-java-sdk-sqs:${property('app.version.awsJavaSdk')}"
     implementation "commons-io:commons-io:${property('app.version.commonsIO')}"
-    implementation "io.github.resilience4j:resilience4j-spring-boot2:${property('app.version.resilience4j')}"
     implementation "org.apache.httpcomponents:httpclient:${property('app.version.httpclient')}"
     implementation "org.apache.tika:tika-core:${property('app.version.tika')}"
     implementation "org.apache.tika:tika-parser-audiovideo-module:${property('app.version.tika')}"
-    implementation "org.springframework:spring-jms"
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j"
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
 }

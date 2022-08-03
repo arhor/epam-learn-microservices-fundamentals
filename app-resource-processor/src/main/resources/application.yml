@@ -1,8 +1,9 @@
 server:
-  port: ${PORT:5000}
+  port: ${PORT:0}
   error:
     whitelabel:
       enabled: false
+
 spring:
   application:
     name: resource-processor
@@ -46,6 +47,13 @@ resilience4j:
         max-attempts: ${configuration.retry.default-max-attempts}
         wait-duration: ${configuration.retry.default-wait-duration}
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+  instance:
+    prefer-ip-address: true
+
 configuration:
   aws:
     url: ${AWS_URL}
@@ -55,8 +63,6 @@ configuration:
     sqs:
       created-resources-queue: ${AWS_SQS_QUEUE_CREATED_RESOURCES}
       deleted-resources-queue: ${AWS_SQS_QUEUE_DELETED_RESOURCES}
-  resource-service-url: ${RESOURCE_SERVICE_URL}
-  song-service-url: ${SONG_SERVICE_URL}
   retry:
     default-max-attempts: 5
     default-wait-duration: 5s

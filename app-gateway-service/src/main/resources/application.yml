@@ -1,0 +1,24 @@
+server:
+  port: ${PORT:0}
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: resourcesModule
+          uri: lb://RESOURCE-SERVICE
+          predicates:
+            - Path=/api/resources/**
+        - id: songsModule
+          uri: lb://SONG-SERVICE
+          predicates:
+            - Path=/api/songs/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+  instance:
+    prefer-ip-address: true

@@ -51,7 +51,7 @@ class ResourceController(private val service: ResourceService) {
             .body(stream)
     }
 
-    @DeleteMapping(consumes = ["application/json"], produces = ["application/json"])
+    @DeleteMapping(produces = ["application/json"])
     fun deleteResources(@RequestParam @Size(max = 200) ids: List<Long>): ResponseEntity<*> {
         val deleteResourcesIds = service.deleteResources(ids)
         val dto = IdListDTO(deleteResourcesIds)
