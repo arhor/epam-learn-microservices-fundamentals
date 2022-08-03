@@ -1,0 +1,7 @@
+plugins {
+    id "epam-learn-microservices-fundamentals.spring-cloud-conventions"
+}
+
+dependencies {
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server"
+}

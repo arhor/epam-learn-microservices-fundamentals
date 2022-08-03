@@ -1,0 +1,9 @@
+plugins {
+    id "epam-learn-microservices-fundamentals.spring-basic-conventions"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${property("app.version.springCloud")}"
+    }
+}

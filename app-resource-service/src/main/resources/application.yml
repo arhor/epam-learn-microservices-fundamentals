@@ -1,8 +1,9 @@
 server:
-  port: ${PORT:5001}
+  port: ${PORT:0}
   error:
     whitelabel:
       enabled: false
+
 spring:
   application:
     name: resource-service
@@ -60,6 +61,13 @@ resilience4j:
       resource-event-publisher:
         max-attempts: ${configuration.retry.default-max-attempts}
         wait-duration: ${configuration.retry.default-wait-duration}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+  instance:
+    prefer-ip-address: true
 
 configuration:
   aws:

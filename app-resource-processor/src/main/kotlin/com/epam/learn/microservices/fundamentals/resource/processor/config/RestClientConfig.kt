@@ -16,10 +16,7 @@ class RestClientConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    fun defaultRestTemplate(
-        builder: RestTemplateBuilder,
-        errorHandler: ResponseErrorHandler
-    ): RestTemplate {
+    fun defaultRestTemplate(builder: RestTemplateBuilder, errorHandler: ResponseErrorHandler): RestTemplate {
         return builder
             .errorHandler(errorHandler)
             .requestFactory(::HttpComponentsClientHttpRequestFactory)

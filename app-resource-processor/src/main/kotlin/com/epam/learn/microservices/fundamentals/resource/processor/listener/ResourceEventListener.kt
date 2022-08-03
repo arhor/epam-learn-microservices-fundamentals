@@ -19,7 +19,8 @@ class ResourceEventListener(
     @JmsListener(destination = "resource-created-events")
     fun processResourceCreatedEvent(event: ResourceEvent.Created) {
         val resourceId = event.id
-        val binaryData = resourcesClient.fetchResourceBinaryData(resourceId)
+        val binaryData = resourcesClient.fetchResourceBinaryData(resourceId).body?.inputStream
+            ?: throw IllegalStateException("Response body cannot be null")
         val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
 
         songsClient.createSongMetadata(metadata)

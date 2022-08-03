@@ -1,0 +1,19 @@
+plugins {
+    id "epam-learn-microservices-fundamentals.spring-extended-conventions"
+}
+
+dependencies {
+    runtimeOnly "org.postgresql:postgresql"
+
+    implementation "org.flywaydb:flyway-core"
+    implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
+
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:postgresql"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${property('app.version.testcontainers')}"
+    }
+}

@@ -1,0 +1,9 @@
+plugins {
+    id "epam-learn-microservices-fundamentals.spring-basic-conventions"
+}
+
+dependencies {
+    kapt "org.springframework:spring-context-indexer"
+    kapt "org.springframework.boot:spring-boot-configuration-processor"
+}
+
