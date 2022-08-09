@@ -10,7 +10,7 @@ dependencies {
     compileOnly "org.mapstruct:mapstruct:${property("app.version.mapstruct")}"
 
     implementation project(":lib-commons")
-    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "com.amazonaws:aws-java-sdk-s3:${property('app.version.awsJavaSdk')}"
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
-    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j"
 }
