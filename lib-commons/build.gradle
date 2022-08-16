@@ -1,5 +1,5 @@
 plugins {
-    id "epam-learn-microservices-fundamentals.spring-server-conventions"
+    id "epam-learn-microservices-fundamentals.spring-web-conventions"
     id "java-library"
 }
 

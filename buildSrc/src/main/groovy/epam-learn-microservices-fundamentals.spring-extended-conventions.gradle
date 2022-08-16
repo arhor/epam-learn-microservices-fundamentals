@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    kapt platform(rootProject)
     kapt "org.springframework:spring-context-indexer"
     kapt "org.springframework.boot:spring-boot-configuration-processor"
 }

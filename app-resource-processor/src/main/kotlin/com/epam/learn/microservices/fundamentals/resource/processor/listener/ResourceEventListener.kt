@@ -24,6 +24,8 @@ class ResourceEventListener(
         val metadata = metadataProcessor.extractMetadata(resourceId, binaryData)
 
         songsClient.createSongMetadata(metadata)
+
+        // publish event 'resource-metadata-saved'
     }
 
     @JmsListener(destination = "resource-deleted-events")

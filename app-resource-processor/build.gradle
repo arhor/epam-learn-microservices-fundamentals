@@ -1,15 +1,16 @@
 plugins {
     id "epam-learn-microservices-fundamentals.spring-cloud-conventions"
     id "epam-learn-microservices-fundamentals.spring-messaging-conventions"
-    id "epam-learn-microservices-fundamentals.spring-server-conventions"
+    id "epam-learn-microservices-fundamentals.spring-web-conventions"
 }
 
 dependencies {
+    implementation platform(rootProject)
     implementation project(":lib-commons")
-    implementation "commons-io:commons-io:${property('app.version.commonsIO')}"
-    implementation "org.apache.httpcomponents:httpclient:${property('app.version.httpclient')}"
-    implementation "org.apache.tika:tika-core:${property('app.version.tika')}"
-    implementation "org.apache.tika:tika-parser-audiovideo-module:${property('app.version.tika')}"
+    implementation "commons-io:commons-io"
+    implementation "org.apache.httpcomponents:httpclient"
+    implementation "org.apache.tika:tika-core"
+    implementation "org.apache.tika:tika-parser-audiovideo-module"
     implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j"
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
     implementation "org.springframework.cloud:spring-cloud-starter-openfeign"

@@ -11,7 +11,6 @@ import org.springframework.data.relational.core.mapping.Table
  * @param type storage type
  */
 @Immutable
-@JvmRecord
 @Table("storages")
 data class Storage(
     @Id

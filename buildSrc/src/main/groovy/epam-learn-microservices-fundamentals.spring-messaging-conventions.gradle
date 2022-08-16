@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation "com.amazonaws:amazon-sqs-java-messaging-lib:${property('app.version.awsJavaJms')}"
-    implementation "com.amazonaws:aws-java-sdk-sqs:${property('app.version.awsJavaSdk')}"
+    implementation "com.amazonaws:amazon-sqs-java-messaging-lib"
+    implementation "com.amazonaws:aws-java-sdk-sqs"
     implementation "org.springframework:spring-jms"
 }
 

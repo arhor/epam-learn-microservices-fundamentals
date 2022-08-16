@@ -6,11 +6,11 @@ import com.epam.learn.microservices.fundamentals.storage.service.service.dto.Sto
 
 interface StorageService {
 
-    fun getStorages(): List<StorageResponseDTO>
+    fun getStorages(type: StorageType?, single: Boolean?): List<StorageResponseDTO>
 
-    fun getSingleStorageByType(type: StorageType): StorageResponseDTO?
+    fun getStorageById(storageId: Long): StorageResponseDTO
 
     fun createStorage(dto: StorageRequestDTO): Long
 
-    fun deleteStorages(ids: Iterable<Long>): Iterable<Long>
+    fun deleteStorages(storagesIds: Iterable<Long>): Iterable<Long>
 }
