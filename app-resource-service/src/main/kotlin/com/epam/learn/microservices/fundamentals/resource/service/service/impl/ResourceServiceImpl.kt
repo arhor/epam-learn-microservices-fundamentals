@@ -15,6 +15,8 @@ import com.epam.learn.microservices.fundamentals.resource.service.service.dto.Re
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityDuplicateException
 import com.epam.learn.microservices.fundamentals.resource.service.service.exception.EntityNotFoundException
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -31,6 +33,9 @@ class ResourceServiceImpl(
     private val resourceRepository: ResourceRepository,
     private val storageServiceClient: StorageServiceClient,
 ) : ResourceService {
+
+    @Autowired
+    private lateinit var circuitBreakerFactory: CircuitBreakerFactory<*, *>
 
     @Transactional
     override fun saveResource(filename: String, data: ByteArray): Long {
@@ -115,7 +120,19 @@ class ResourceServiceImpl(
         if (resourceRepository.existsByFilename(filename)) {
             throw EntityDuplicateException("filename = $filename")
         }
-        val storage = storageServiceClient.getStorages(type = StorageType.STAGING, single = true).single()
+
+        val storage = circuitBreakerFactory.create("resource-service").run({
+            storageServiceClient.getStorages(
+                type = StorageType.STAGING,
+                single = true
+            ).single()
+        }) {
+            log.error("Using fallback staging bucket", it)
+            mapOf(
+                "id" to -1L,
+                "name" to "fallback-staging-bucket"
+            )
+        }
 
         log.info("Fetched storage data: {}", storage)
 
