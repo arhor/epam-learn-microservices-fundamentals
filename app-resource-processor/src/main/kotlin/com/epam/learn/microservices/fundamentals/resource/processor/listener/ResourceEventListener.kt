@@ -5,7 +5,9 @@ import com.epam.learn.microservices.fundamentals.logging.LogExecution
 import com.epam.learn.microservices.fundamentals.resource.processor.client.ResourceServiceClient
 import com.epam.learn.microservices.fundamentals.resource.processor.client.SongServiceClient
 import com.epam.learn.microservices.fundamentals.resource.processor.service.ResourceMetadataProcessor
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.jms.annotation.JmsListener
+import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,7 +16,11 @@ class ResourceEventListener(
     private val songsClient: SongServiceClient,
     private val resourcesClient: ResourceServiceClient,
     private val metadataProcessor: ResourceMetadataProcessor,
+    private val jmsTemplate: JmsTemplate,
 ) {
+
+    @Value("\${configuration.aws.sqs.handled-resources-queue}")
+    lateinit var handledResourcesQueue: String
 
     @JmsListener(destination = "resource-created-events")
     fun processResourceCreatedEvent(event: ResourceEvent.Created) {
@@ -25,7 +31,7 @@ class ResourceEventListener(
 
         songsClient.createSongMetadata(metadata)
 
-        // publish event 'resource-metadata-saved'
+        jmsTemplate.convertAndSend(handledResourcesQueue, ResourceEvent.Handled(resourceId))
     }
 
     @JmsListener(destination = "resource-deleted-events")

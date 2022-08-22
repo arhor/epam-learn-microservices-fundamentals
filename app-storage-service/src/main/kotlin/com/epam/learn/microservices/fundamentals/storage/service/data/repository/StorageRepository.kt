@@ -10,10 +10,6 @@ import org.springframework.data.repository.CrudRepository
 @LogExecution
 interface StorageRepository : CrudRepository<Storage, Long> {
 
-    @Modifying
-    @Query("DELETE FROM storages WHERE id IN :ids RETURNING id")
-    fun deleteAllByIdReturningDeletedIds(ids: Iterable<Long>): List<Long>
-
     @Query("SELECT * FROM storages WHERE type = :type")
     fun findAllByType(type: StorageType): List<Storage>
 
@@ -22,4 +18,8 @@ interface StorageRepository : CrudRepository<Storage, Long> {
 
     @Query("SELECT * FROM storages WHERE type = :type LIMIT 1")
     fun findSingleByType(type: StorageType): List<Storage>
+
+    fun existsByName(name: String): Boolean
+
+    fun existsByNameAndType(name: String, type: StorageType): Boolean
 }

@@ -15,6 +15,10 @@ spring:
           uri: lb://SONG-SERVICE
           predicates:
             - Path=/api/songs/**
+        - id: storagesModule
+          uri: lb://STORAGE-SERVICE
+          predicates:
+            - Path=/api/storages/**
 
 eureka:
   client:

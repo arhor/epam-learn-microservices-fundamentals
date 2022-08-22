@@ -46,6 +46,13 @@ class StorageController(private val service: StorageService) {
         return service.getStorages(type, single)
     }
 
+    @GetMapping(params = ["ids"], produces = ["application/json"])
+    fun getStoragesByIds(
+        @RequestParam(required = true) ids: List<Long>,
+    ): List<StorageResponseDTO> {
+        return service.getStoragesByIds(ids)
+    }
+
     @GetMapping(path = ["{id}"], produces = ["application/json"])
     fun getStorageById(@PathVariable id: Long): StorageResponseDTO {
         return service.getStorageById(id)

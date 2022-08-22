@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Immutable
 import org.springframework.data.relational.core.mapping.Table
 
 /**
- * @param id unique identifier
+ * @param id   unique identifier
  * @param name AWS S3 bucket name
  * @param type storage type
  */
@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("storages")
 data class Storage(
     @Id
-    val id: Long,
+    val id: Long? = null,
     val name: String,
     val type: StorageType,
 )

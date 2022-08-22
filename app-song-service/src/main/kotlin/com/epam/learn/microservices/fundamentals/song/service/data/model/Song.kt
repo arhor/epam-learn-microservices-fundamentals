@@ -1,30 +1,32 @@
 package com.epam.learn.microservices.fundamentals.song.service.data.model
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.Immutable
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
+@Immutable
 @Table("songs")
 data class Song(
     @Id
-    @Column("id")
+    @Column
     val id: Long? = null,
 
-    @Column("name")
+    @Column
     val name: String? = null,
 
-    @Column("year")
+    @Column
     val year: String? = null,
 
-    @Column("album")
+    @Column
     val album: String? = null,
 
-    @Column("artist")
+    @Column
     val artist: String? = null,
 
-    @Column("length")
+    @Column
     val length: String? = null,
 
-    @Column("resource_id")
+    @Column
     val resourceId: Long,
 )

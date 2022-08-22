@@ -8,9 +8,13 @@ interface StorageService {
 
     fun getStorages(type: StorageType?, single: Boolean?): List<StorageResponseDTO>
 
+    fun getStoragesByIds(ids: List<Long>): List<StorageResponseDTO>
+
     fun getStorageById(storageId: Long): StorageResponseDTO
 
     fun createStorage(dto: StorageRequestDTO): Long
+
+    fun createDefaultStorages()
 
     fun deleteStorages(storagesIds: Iterable<Long>): Iterable<Long>
 }

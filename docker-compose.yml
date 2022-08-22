@@ -40,6 +40,8 @@ services:
     depends_on:
       - localstack
       - discovery-service
+      - resource-service
+      - song-service
     env_file:
       - app-resource-processor/.env.local
 
@@ -55,6 +57,7 @@ services:
       - localstack
       - resource-service-db
       - discovery-service
+      - storage-service
     env_file:
       - app-resource-service/.env.local
 
