@@ -1,0 +1,75 @@
+server:
+  port: ${PORT:0}
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: storage-service
+  aop:
+    proxy-target-class: false
+  main:
+    allow-bean-definition-overriding: true
+  web:
+    locale: en
+    resources:
+      add-mappings: false
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILES:dev}
+  jmx:
+    enabled: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  output:
+    ansi:
+      enabled: detect
+  sql:
+    init:
+      platform: postgres
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    hikari:
+      auto-commit: false
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0.0
+
+resilience4j:
+  retry:
+    instances:
+      resource-event-publisher:
+        max-attempts: ${configuration.retry.default-max-attempts}
+        wait-duration: ${configuration.retry.default-wait-duration}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+  instance:
+    prefer-ip-address: true
+
+configuration:
+  aws:
+    url: ${AWS_URL}
+    region: ${AWS_DEFAULT_REGION}
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET_NAME}
+    sqs:
+      created-resources-queue: ${AWS_SQS_QUEUE_CREATED_RESOURCES}
+      deleted-resources-queue: ${AWS_SQS_QUEUE_DELETED_RESOURCES}
+  retry:
+    default-max-attempts: 5
+    default-wait-duration: 5s

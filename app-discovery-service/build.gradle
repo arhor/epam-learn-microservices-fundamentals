@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
+    implementation platform(rootProject)
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server"
 }

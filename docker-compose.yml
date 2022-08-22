@@ -1,6 +1,8 @@
 version: "3.8"
 
 services:
+  ########## application services ##########
+
   discovery-service:
     container_name: discovery-service
     hostname: discovery-service
@@ -22,8 +24,107 @@ services:
     image: gateway-service:latest
     networks:
       - docker-network
+    depends_on:
+      - discovery-service
     env_file:
       - app-gateway-service/.env.local
+
+  resource-processor:
+    container_name: resource-processor
+    hostname: resource-processor
+    build:
+      context: app-resource-processor
+    image: resource-processor:latest
+    networks:
+      - docker-network
+    depends_on:
+      - localstack
+      - discovery-service
+      - resource-service
+      - song-service
+    env_file:
+      - app-resource-processor/.env.local
+
+  resource-service:
+    container_name: resource-service
+    hostname: resource-service
+    build:
+      context: app-resource-service
+    image: resource-service:latest
+    networks:
+      - docker-network
+    depends_on:
+      - localstack
+      - resource-service-db
+      - discovery-service
+      - storage-service
+    env_file:
+      - app-resource-service/.env.local
+
+  song-service:
+    container_name: song-service
+    hostname: song-service
+    build:
+      context: app-song-service
+    image: song-service:latest
+    networks:
+      - docker-network
+    depends_on:
+      - song-service-db
+      - discovery-service
+    env_file:
+      - app-song-service/.env.local
+
+  storage-service:
+    container_name: storage-service
+    hostname: storage-service
+    build:
+      context: app-storage-service
+    image: storage-service:latest
+    networks:
+      - docker-network
+    depends_on:
+      - storage-service-db
+      - discovery-service
+    env_file:
+      - app-storage-service/.env.local
+
+  ########## databases required by services ##########
+
+  resource-service-db:
+    image: postgres:12
+    container_name: resource-service-db
+    networks:
+      - docker-network
+    tmpfs:
+      - "/var/lib/postgresql/data"
+    env_file:
+      - app-resource-service/.env.local
+    command: -p 5433
+
+  song-service-db:
+    image: postgres:12
+    container_name: song-service-db
+    networks:
+      - "docker-network"
+    tmpfs:
+      - "/var/lib/postgresql/data"
+    env_file:
+      - "app-song-service/.env.local"
+    command: -p 5434
+
+  storage-service-db:
+    image: postgres:12
+    container_name: storage-service-db
+    networks:
+      - "docker-network"
+    tmpfs:
+      - "/var/lib/postgresql/data"
+    env_file:
+      - "app-storage-service/.env.local"
+    command: -p 5435
+
+  ########## AWS services emulation ##########
 
   localstack:
     image: localstack/localstack:latest
@@ -43,74 +144,6 @@ services:
       - app-resource-service/.env.local
     environment:
       SERVICES: s3,sqs
-
-  resource-processor:
-    container_name: resource-processor
-    hostname: resource-processor
-    build:
-      context: app-resource-processor
-    image: resource-processor:latest
-    networks:
-      - docker-network
-    depends_on:
-      - localstack
-      - discovery-service
-      - gateway-service
-    env_file:
-      - app-resource-processor/.env.local
-
-  resource-service:
-    container_name: resource-service
-    hostname: resource-service
-    build:
-      context: app-resource-service
-    image: resource-service:latest
-    networks:
-      - docker-network
-    depends_on:
-      - localstack
-      - resource-service-db
-      - discovery-service
-      - gateway-service
-    env_file:
-      - app-resource-service/.env.local
-
-  resource-service-db:
-    image: postgres:12
-    container_name: resource-service-db
-    networks:
-      - docker-network
-    tmpfs:
-      - "/var/lib/postgresql/data"
-    env_file:
-      - app-resource-service/.env.local
-    command: -p 5433
-
-  song-service:
-    container_name: song-service
-    hostname: song-service
-    build:
-      context: app-song-service
-    image: song-service:latest
-    networks:
-      - docker-network
-    depends_on:
-      - song-service-db
-      - discovery-service
-      - gateway-service
-    env_file:
-      - app-song-service/.env.local
-
-  song-service-db:
-    image: postgres:12
-    container_name: song-service-db
-    networks:
-      - "docker-network"
-    tmpfs:
-      - "/var/lib/postgresql/data"
-    env_file:
-      - "app-song-service/.env.local"
-    command: -p 5434
 
 networks:
   docker-network:

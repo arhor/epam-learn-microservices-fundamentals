@@ -2,15 +2,16 @@ plugins {
     id "epam-learn-microservices-fundamentals.spring-cloud-conventions"
     id "epam-learn-microservices-fundamentals.spring-data-conventions"
     id "epam-learn-microservices-fundamentals.spring-messaging-conventions"
-    id "epam-learn-microservices-fundamentals.spring-server-conventions"
+    id "epam-learn-microservices-fundamentals.spring-web-conventions"
 }
 
 dependencies {
-    runtimeOnly "org.glassfish.jaxb:jaxb-runtime"
-
     implementation project(":lib-commons")
-    implementation "com.amazonaws:aws-java-sdk-s3:${property('app.version.awsJavaSdk')}"
+    implementation "com.amazonaws:aws-java-sdk-s3"
     implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j"
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
-    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+    runtimeOnly "org.glassfish.jaxb:jaxb-runtime"
 }

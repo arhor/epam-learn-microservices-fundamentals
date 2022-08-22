@@ -1,16 +1,16 @@
 plugins {
-    id "epam-learn-microservices-fundamentals.spring-data-conventions"
     id "epam-learn-microservices-fundamentals.spring-cloud-conventions"
-    id "epam-learn-microservices-fundamentals.spring-server-conventions"
+    id "epam-learn-microservices-fundamentals.spring-data-conventions"
+    id "epam-learn-microservices-fundamentals.spring-web-conventions"
 }
 
 dependencies {
-    kapt "org.mapstruct:mapstruct-processor:${property("app.version.mapstruct")}"
-
-    compileOnly "org.mapstruct:mapstruct:${property("app.version.mapstruct")}"
+    kapt "org.mapstruct:mapstruct-processor"
 
     implementation project(":lib-commons")
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
-    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j"
+
+    compileOnly "org.mapstruct:mapstruct"
 }

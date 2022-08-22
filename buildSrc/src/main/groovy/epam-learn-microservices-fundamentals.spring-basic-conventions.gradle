@@ -15,7 +15,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.mockito.kotlin:mockito-kotlin:${property('app.version.mockitoKotlin')}"
+    testImplementation "org.mockito.kotlin:mockito-kotlin"
 }
 
 task contractTest(type: Test) {

@@ -20,8 +20,6 @@ spring:
   jmx:
     enabled: false
   jms:
-    template:
-      default-destination: ${configuration.aws.sqs.queue}
     listener:
       acknowledge-mode: CLIENT
       concurrency: 3
@@ -63,6 +61,7 @@ configuration:
     sqs:
       created-resources-queue: ${AWS_SQS_QUEUE_CREATED_RESOURCES}
       deleted-resources-queue: ${AWS_SQS_QUEUE_DELETED_RESOURCES}
+      handled-resources-queue: ${AWS_SQS_QUEUE_HANDLED_RESOURCES}
   retry:
     default-max-attempts: 5
     default-wait-duration: 5s
