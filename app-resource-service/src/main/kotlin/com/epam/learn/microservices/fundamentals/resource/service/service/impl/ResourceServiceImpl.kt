@@ -58,10 +58,15 @@ class ResourceServiceImpl(
     override fun getResource(id: Long): ResourceDTO {
         val resource = resourceRepository.findByIdOrNull(id)
             ?: throw EntityNotFoundException("id = $id")
-        val storage = storageServiceClient.getStorageId(resource.storageId)
+
+        val stagingStorageName = when (resource.storageId) {
+            1L -> "default-storage-staging"
+            2L -> "default-storage-permanent"
+            else -> storageServiceClient.getStorageId(resource.storageId).name
+        }
 
         val (data, size) = try {
-            resourceDataRepository.download(storage.name, resource.filename)
+            resourceDataRepository.download(stagingStorageName, resource.filename)
         } catch (e: AmazonS3Exception) {
             applicationEventPublisher.publishEvent(ResourceBinaryDataNotFoundEvent(id))
             throw e
@@ -121,7 +126,7 @@ class ResourceServiceImpl(
             throw EntityDuplicateException("filename = $filename")
         }
 
-        val storage = circuitBreakerFactory.create("resource-service").run({
+        val storage = circuitBreakerFactory.create("storage-service").run({
             storageServiceClient.getStorages(
                 type = StorageType.STAGING,
                 single = true
@@ -129,8 +134,8 @@ class ResourceServiceImpl(
         }) {
             log.error("Using fallback staging bucket", it)
             mapOf(
-                "id" to -1L,
-                "name" to "fallback-staging-bucket"
+                "id" to 1L,
+                "name" to "default-storage-staging"
             )
         }
 

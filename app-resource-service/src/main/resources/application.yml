@@ -63,7 +63,7 @@ resilience4j:
         wait-duration: ${configuration.retry.default-wait-duration}
   circuitbreaker:
     instances:
-      resource-service:
+      storage-service:
         registerHealthIndicator: true
         eventConsumerBufferSize: 10
         automaticTransitionFromOpenToHalfOpenEnabled: true
