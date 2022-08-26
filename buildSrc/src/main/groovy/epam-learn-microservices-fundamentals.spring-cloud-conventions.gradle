@@ -2,6 +2,11 @@ plugins {
     id "epam-learn-microservices-fundamentals.spring-basic-conventions"
 }
 
+dependencies {
+    implementation "com.internetitem:logback-elasticsearch-appender"
+    implementation "org.springframework.cloud:spring-cloud-starter-sleuth"
+}
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${property("app.version.springCloud")}"

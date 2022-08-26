@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  ########## application services ##########
+  ########## infrastructure services ##########
 
   discovery-service:
     container_name: discovery-service
@@ -17,8 +17,6 @@ services:
     hostname: gateway-service
     ports:
       - "8080:8080"
-    expose:
-      - "8080"
     build:
       context: app-gateway-service
     image: gateway-service:latest
@@ -28,6 +26,8 @@ services:
       - discovery-service
     env_file:
       - app-gateway-service/.env.local
+
+  ########## application services ##########
 
   resource-processor:
     container_name: resource-processor
@@ -130,10 +130,6 @@ services:
     image: localstack/localstack:latest
     container_name: localstack
     hostname: localstack
-    expose:
-      - "4566-4583"
-    ports:
-      - "4566-4583:4566-4583"
     networks:
       - docker-network
     volumes:
@@ -144,6 +140,43 @@ services:
       - app-resource-service/.env.local
     environment:
       SERVICES: s3,sqs
+
+  ########## Monitoring   ##########
+
+  elasticsearch:
+    container_name: elasticsearch
+    depends_on:
+      - gateway-service
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+    environment:
+      - bootstrap.system_call_filter=false
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    tmpfs:
+      - "/usr/share/elasticsearch/data"
+    networks:
+      - "docker-network"
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.11.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+    networks:
+      - "docker-network"
+    depends_on:
+      - "elasticsearch"
 
 networks:
   docker-network:

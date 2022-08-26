@@ -19,6 +19,10 @@ spring:
           uri: lb://STORAGE-SERVICE
           predicates:
             - Path=/api/storages/**
+        - id: kibanaModule
+          uri: ${KIBANA_URL}
+          predicates:
+            - Path=/kibana/**
 
 eureka:
   client:
