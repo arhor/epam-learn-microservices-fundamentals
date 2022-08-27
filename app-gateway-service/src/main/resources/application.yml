@@ -7,18 +7,22 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: resourcesModule
+        - id: resource-service
           uri: lb://RESOURCE-SERVICE
           predicates:
             - Path=/api/resources/**
-        - id: songsModule
+        - id: song-service
           uri: lb://SONG-SERVICE
           predicates:
             - Path=/api/songs/**
-        - id: storagesModule
+        - id: storage-service
           uri: lb://STORAGE-SERVICE
           predicates:
             - Path=/api/storages/**
+        - id: kibana
+          uri: ${KIBANA_URL}
+          predicates:
+            - Path=/kibana/**
 
 eureka:
   client:
