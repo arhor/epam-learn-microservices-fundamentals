@@ -8,6 +8,7 @@ import com.epam.learn.microservices.fundamentals.storage.service.service.Storage
 import com.epam.learn.microservices.fundamentals.storage.service.service.dto.StorageRequestDTO
 import com.epam.learn.microservices.fundamentals.storage.service.service.dto.StorageResponseDTO
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,6 +25,7 @@ import javax.validation.constraints.Size
 @RequestMapping("/storages")
 class StorageController(private val service: StorageService) {
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(consumes = ["application/json"], produces = ["application/json"])
     fun createStorage(@RequestBody request: StorageRequestDTO): ResponseEntity<IdDTO<Long>> {
         val id = service.createStorage(request)
@@ -58,6 +60,7 @@ class StorageController(private val service: StorageService) {
         return service.getStorageById(id)
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(produces = ["application/json"])
     fun deleteStorages(@RequestParam @Size(max = 200) ids: List<Long>): IdListDTO<Long> {
         return IdListDTO(
