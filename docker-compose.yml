@@ -16,7 +16,7 @@ services:
     container_name: gateway-service
     hostname: gateway-service
     ports:
-      - "8080:8080"
+      - "5000:8080"
     build:
       context: app-gateway-service
     image: gateway-service:latest
@@ -141,7 +141,7 @@ services:
     environment:
       SERVICES: s3,sqs
 
-  ########## Monitoring   ##########
+  ########## Monitoring ##########
 
   elasticsearch:
     container_name: elasticsearch
@@ -177,6 +177,18 @@ services:
       - "docker-network"
     depends_on:
       - "elasticsearch"
+
+  ########## Redis for distributed session ##########
+
+  redis:
+    container_name: redis
+    image: docker.io/bitnami/redis:7.0
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - "docker-network"
+    ports:
+      - "6379:6379"
 
 networks:
   docker-network:
